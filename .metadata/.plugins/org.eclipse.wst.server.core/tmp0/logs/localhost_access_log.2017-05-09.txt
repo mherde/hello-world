@@ -1,0 +1,4 @@
+127.0.0.1 - - [09/May/2017:22:46:46 +0200] "GET / HTTP/1.1" 404 1070
+0:0:0:0:0:0:0:1 - - [09/May/2017:22:46:48 +0200] "GET /KSM/ HTTP/1.1" 200 502
+0:0:0:0:0:0:0:1 - - [09/May/2017:22:46:53 +0200] "GET /KSM/MyServlet?searchfield=cocoa&AndOr=AND HTTP/1.1" 200 663
+0:0:0:0:0:0:0:1 - - [09/May/2017:22:46:58 +0200] "GET /KSM/MyServlet?searchfield=&AndOr=AND HTTP/1.1" 200 16
