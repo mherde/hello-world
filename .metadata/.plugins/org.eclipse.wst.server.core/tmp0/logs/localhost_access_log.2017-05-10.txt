@@ -2,3 +2,14 @@
 0:0:0:0:0:0:0:1 - - [10/May/2017:08:55:06 +0200] "GET /KSM/ HTTP/1.1" 200 502
 0:0:0:0:0:0:0:1 - - [10/May/2017:08:55:15 +0200] "GET /KSM/MyServlet?searchfield=Denis&AndOr=AND HTTP/1.1" 200 72
 0:0:0:0:0:0:0:1 - - [10/May/2017:08:55:21 +0200] "GET /KSM/MyServlet?searchfield=denis&AndOr=AND HTTP/1.1" 200 216
+127.0.0.1 - - [10/May/2017:09:07:26 +0200] "GET / HTTP/1.1" 404 1070
+0:0:0:0:0:0:0:1 - - [10/May/2017:09:07:27 +0200] "GET /KSM/WEB-INF/classes/de/unikassel/ir/vsr/CorpusImpl.java HTTP/1.1" 404 1047
+127.0.0.1 - - [10/May/2017:09:07:45 +0200] "GET / HTTP/1.1" 404 1070
+0:0:0:0:0:0:0:1 - - [10/May/2017:09:07:45 +0200] "GET /KSM/ HTTP/1.1" 200 502
+0:0:0:0:0:0:0:1 - - [10/May/2017:09:07:50 +0200] "GET /KSM/MyServlet?searchfield=Cocoa&AndOr=AND HTTP/1.1" 200 56
+0:0:0:0:0:0:0:1 - - [10/May/2017:09:07:55 +0200] "GET /KSM/MyServlet?searchfield=cocoa&AndOr=AND HTTP/1.1" 200 703
+127.0.0.1 - - [10/May/2017:11:05:47 +0200] "GET / HTTP/1.1" 404 1070
+0:0:0:0:0:0:0:1 - - [10/May/2017:11:05:48 +0200] "GET /KSM/ HTTP/1.1" 200 505
+0:0:0:0:0:0:0:1 - - [10/May/2017:11:05:58 +0200] "GET /KSM/MyServlet?searchfield=cocoa+Denis&AndOr=AND HTTP/1.1" 200 56
+0:0:0:0:0:0:0:1 - - [10/May/2017:11:06:04 +0200] "GET /KSM/MyServlet?searchfield=cocoa+denis&AndOr=AND HTTP/1.1" 200 200
+0:0:0:0:0:0:0:1 - - [10/May/2017:11:06:11 +0200] "GET /KSM/MyServlet?searchfield=cocoa+denis&AndOr=OR HTTP/1.1" 200 703

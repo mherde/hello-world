@@ -23,7 +23,9 @@ public class DocumentImpl implements Document {
 	 */
 	private int size = 0;
 
-	/* constructor with initializing of document id */
+	/**
+	 * constructor initializing document id
+	 */
 	public DocumentImpl(String fileName) {
 		this.id = fileName;
 	}
@@ -48,16 +50,16 @@ public class DocumentImpl implements Document {
 
 		/* reader to read document */
 		BufferedReader in = new BufferedReader(new InputStreamReader(input));
-		
+
 		/* stores all lines of the document */
 		ArrayList<String[]> lines = new ArrayList<>();
-		
+
 		/* stores currentLine */
 		String currentLine;
-		
+
 		/* reading all lines of document */
 		while ((currentLine = in.readLine()) != null) {
-			
+
 			/* adding line as array of terms */
 			lines.add(currentLine.trim().split("\\s+"));
 		}
@@ -106,7 +108,7 @@ public class DocumentImpl implements Document {
 		if (this.termsIndex.containsKey(term)) {
 
 			/*
-			 * calculation of number of occurences by getting number of
+			 * calculation of number of occurrences by getting number of
 			 * positions
 			 */
 			return this.termsIndex.get(term).size();

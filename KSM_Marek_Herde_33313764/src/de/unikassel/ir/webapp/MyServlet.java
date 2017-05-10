@@ -43,7 +43,6 @@ public class MyServlet extends HttpServlet {
 		String booleanOperator = request.getParameter("AndOr");
 		
 		/* printing some information */
-		response.getWriter().append("Served at: ").append(request.getContextPath() + "\n");
 		response.getWriter().append("Moogle found the following documents w.r.t. your query:\n");
 		
 		/* creation of new search engine to search for documents */
@@ -54,10 +53,10 @@ public class MyServlet extends HttpServlet {
 		
 		/* checking which booleanOperator is used */
 		if (booleanOperator.equals("OR")) {
-			/* AND operator */
-			result = searcher.testQuery(searchterm, false);
-		} else if(booleanOperator.equals("AND")) {
 			/* OR operator */
+			result = searcher.testQuery(searchterm, false);
+		} else {
+			/* AND operator */
 			result = searcher.testQuery(searchterm, true);
 		}
 		

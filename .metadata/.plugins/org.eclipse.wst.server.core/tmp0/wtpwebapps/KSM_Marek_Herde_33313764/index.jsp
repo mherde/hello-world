@@ -12,12 +12,10 @@
 		<%@ page import="de.unikassel.ir.webapp.MyServlet"%>
 		<form target="_blank" action="MyServlet">
 			<input type="text" name="searchfield"> <input type="submit"
-				value="search" /> <br> <select name="AndOr">
+				value="search" /> <br> <br> <select name="AndOr">
 				<option>AND</option>
 				<option>OR</option>
 			</select>
 		</form>
-
-
 	</center>
 </html>

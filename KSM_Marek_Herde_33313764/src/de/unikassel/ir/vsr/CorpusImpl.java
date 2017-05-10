@@ -1,18 +1,17 @@
 package de.unikassel.ir.vsr;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 public class CorpusImpl implements Corpus {
 
 	/**
 	 * contains all documents
 	 */
-	private HashSet<Document> corpus = new HashSet<>();
+	private ArrayList<Document> corpus = new ArrayList<>();
 	/**
-	 * number of document in corpus
+	 * number of documents in corpus
 	 */
 	private int size;
 
@@ -36,7 +35,7 @@ public class CorpusImpl implements Corpus {
 	@Override
 	public Collection<Document> getDocumentsContainingAll(String... terms) {
 		/* saves the documents that contains all given terms */
-		Collection<Document> result = new LinkedList<>();
+		Collection<Document> result = new ArrayList<>();
 
 		/* iteration over all documents */
 		Iterator<Document> iterator = this.iterator();
@@ -56,7 +55,7 @@ public class CorpusImpl implements Corpus {
 				}
 			}
 
-			/* if document matchs -> adding document to result */
+			/* if document matches query -> adding document to result */
 			if (match) {
 				result.add(doc);
 			}
@@ -68,7 +67,7 @@ public class CorpusImpl implements Corpus {
 	@Override
 	public Collection<Document> getDocumentsContainingAny(String... terms) {
 		/* saves the documents that contains at least one given term */
-		Collection<Document> result = new LinkedList<>();
+		Collection<Document> result = new ArrayList<>();
 		
 		/* iteration over all documents */
 		Iterator<Document> iterator = this.iterator();
@@ -88,7 +87,7 @@ public class CorpusImpl implements Corpus {
 				}
 			}
 			
-			/* if document matchs -> adding document to result */
+			/* if document matches query -> adding document to result */
 			if (match) {
 				result.add(doc);
 			}
@@ -100,7 +99,7 @@ public class CorpusImpl implements Corpus {
 	@Override
 	public int size() {
 		
-		/* return number of docments in this corpus */
+		/* return number of documents in this corpus */
 		return this.size;
 	}
 
