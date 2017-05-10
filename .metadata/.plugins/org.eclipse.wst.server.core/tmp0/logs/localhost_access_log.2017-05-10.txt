@@ -1,0 +1,4 @@
+127.0.0.1 - - [10/May/2017:08:55:05 +0200] "GET / HTTP/1.1" 404 1070
+0:0:0:0:0:0:0:1 - - [10/May/2017:08:55:06 +0200] "GET /KSM/ HTTP/1.1" 200 502
+0:0:0:0:0:0:0:1 - - [10/May/2017:08:55:15 +0200] "GET /KSM/MyServlet?searchfield=Denis&AndOr=AND HTTP/1.1" 200 72
+0:0:0:0:0:0:0:1 - - [10/May/2017:08:55:21 +0200] "GET /KSM/MyServlet?searchfield=denis&AndOr=AND HTTP/1.1" 200 216
