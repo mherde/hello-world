@@ -69,3 +69,6 @@
 0:0:0:0:0:0:0:1 - - [15/May/2017:22:17:52 +0200] "GET /KSM_Marek_Herde/ HTTP/1.1" 200 534
 0:0:0:0:0:0:0:1 - - [15/May/2017:22:18:02 +0200] "GET /KSM_Marek_Herde/MyServlet?searchfield=go+go+gadget&operator=RANK HTTP/1.1" 200 387
 0:0:0:0:0:0:0:1 - - [15/May/2017:22:19:28 +0200] "GET /KSM_Marek_Herde/MyServlet?searchfield=alternative+daily&operator=RANK HTTP/1.1" 200 497
+127.0.0.1 - - [15/May/2017:22:21:45 +0200] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [15/May/2017:22:21:46 +0200] "GET /KSM_Marek_Herde/ HTTP/1.1" 200 534
+0:0:0:0:0:0:0:1 - - [15/May/2017:22:21:56 +0200] "GET /KSM_Marek_Herde/MyServlet?searchfield=november&operator=RANK HTTP/1.1" 200 440

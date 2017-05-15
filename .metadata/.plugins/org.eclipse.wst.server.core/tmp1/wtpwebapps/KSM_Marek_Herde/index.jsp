@@ -13,9 +13,9 @@
 		<form target="_blank" action="MyServlet">
 			<input type="text" name="searchfield"> <input type="submit"
 				value="search" /> <br> <br> <select name="operator">
-				<option>AND</option>
-				<option>OR</option>
 				<option>RANK</option>
+				<option>OR</option>
+				<option>AND</option>
 			</select>
 		</form>
 	</center>
