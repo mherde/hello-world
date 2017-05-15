@@ -1,0 +1,35 @@
+package de.unikassel.ir.vsr;
+
+public class SearchResultItemImpl implements SearchResultItem {
+
+	private Document document;
+	
+	public SearchResultItemImpl(Document document) {
+		
+	}
+	
+	@Override
+	public int compareTo(SearchResultItem o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Document getDocument() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double getSimilarityScore() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setSimilarityScore(double similarityScore) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

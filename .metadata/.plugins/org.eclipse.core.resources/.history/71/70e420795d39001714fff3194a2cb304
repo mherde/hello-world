@@ -1,0 +1,42 @@
+package de.unikassel.ir.vsr;
+
+import java.util.List;
+
+public class TokenOccurrenceImpl implements TokenOccurrence {
+
+	private Document docRef;
+	private String token;
+
+	public TokenOccurrenceImpl(Document docRef) {
+		this.docRef = docRef;
+	}
+
+	@Override
+	public int compareTo(TokenOccurrence o) {
+		if(this.getWeight() > o.getWeight()){
+			return 1;
+		} else if(this.getWeight() < o.getWeight()){
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public Document getDocument() {
+		return this.docRef;
+	}
+
+	@Override
+	public double getWeight() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<Integer> getPositions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

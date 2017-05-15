@@ -1,0 +1,29 @@
+package de.unikassel.ir.vsr;
+
+import java.util.TreeSet;
+
+public class TokenInfoImpl implements TokenInfo {
+
+	private TreeSet<TokenOccurrence> occList;
+	double idf;
+	
+	public TokenInfoImpl(){
+		this.occList = new TreeSet<>();
+	}
+	
+	@Override
+	public void setIdf(double idf) {
+		this.idf = idf;
+	}
+
+	@Override
+	public double getIdf() {
+		return this.idf;
+	}
+
+	@Override
+	public TreeSet<TokenOccurrence> getTokenOccurrenceList() {
+		return this.occList;
+	}
+
+}
