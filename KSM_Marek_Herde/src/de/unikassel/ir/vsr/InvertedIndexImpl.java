@@ -118,7 +118,6 @@ public class InvertedIndexImpl implements InvertedIndex {
 
 			/* length is root of the current stored length */
 			document.setDocLength(Math.sqrt(currentDocLength));
-
 		}
 	}
 
@@ -172,23 +171,20 @@ public class InvertedIndexImpl implements InvertedIndex {
 		HashMap<String, Double> queryMap = new HashMap<>();
 
 		/* counter for the most frequent token in the query */
-		double maxFrequency = 0;
+		double maxFrequency = 0.;
 
 		/* determining frequency for every token in query */
 		for (String token : query) {
-			double currentTokenCounter = queryMap.getOrDefault(token, 0.);
-			queryMap.put(token, ++currentTokenCounter);
-		}
-
-		/* determining maximal frequency of a token in the query */
-		for (String token : query) {
-			if (queryMap.get(token) > maxFrequency) {
-				maxFrequency = queryMap.get(token);
+			double tokenCounter = queryMap.getOrDefault(token, 0.) + 1;
+			if (maxFrequency < tokenCounter) {
+				/* determining maximal frequency of token in the query */
+				maxFrequency = tokenCounter;
 			}
+			queryMap.put(token, tokenCounter);
 		}
 
 		/* normalizing frequency of every token */
-		for (String token : query) {
+		for (String token : queryMap.keySet()) {
 			double tokenCounter = queryMap.get(token);
 			queryMap.put(token, tokenCounter / maxFrequency);
 		}
@@ -201,7 +197,7 @@ public class InvertedIndexImpl implements InvertedIndex {
 
 			/* needed values to calculate tf-idf */
 			TokenInfo tokenInfo = this.getTokenInfo(token);
-			double idf = tokenInfo.getIdf();
+			double idf = (tokenInfo.getTokenOccurrenceList().size() != 0) ? tokenInfo.getIdf() : 0.;
 			double queryTF = queryMap.get(token);
 
 			/* calculation of tf-idf value for current token */
@@ -223,8 +219,8 @@ public class InvertedIndexImpl implements InvertedIndex {
 
 		/* calculation of the query vector length */
 		double queryLength = 0.;
-		for (double tokenTF_IDF : queryMap.values()) {
-			queryLength += Math.pow(tokenTF_IDF, 2);
+		for (double tokenTfIdf : queryMap.values()) {
+			queryLength += Math.pow(tokenTfIdf, 2);
 		}
 		queryLength = Math.sqrt(queryLength);
 

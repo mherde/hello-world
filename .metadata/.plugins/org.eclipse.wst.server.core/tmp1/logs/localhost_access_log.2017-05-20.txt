@@ -1,0 +1,6 @@
+127.0.0.1 - - [20/May/2017:11:01:45 +0200] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [20/May/2017:11:01:46 +0200] "GET /KSM_Marek_Herde/ HTTP/1.1" 200 534
+0:0:0:0:0:0:0:1 - - [20/May/2017:11:01:50 +0200] "GET /KSM_Marek_Herde/MyServlet?searchfield=gadget&operator=RANK HTTP/1.1" 200 56
+127.0.0.1 - - [20/May/2017:11:06:24 +0200] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [20/May/2017:11:06:25 +0200] "GET /KSM_Marek_Herde/ HTTP/1.1" 200 534
+0:0:0:0:0:0:0:1 - - [20/May/2017:11:06:27 +0200] "GET /KSM_Marek_Herde/MyServlet?searchfield=go&operator=RANK HTTP/1.1" 200 383

@@ -72,3 +72,17 @@
 127.0.0.1 - - [15/May/2017:22:21:45 +0200] "GET / HTTP/1.1" 404 951
 0:0:0:0:0:0:0:1 - - [15/May/2017:22:21:46 +0200] "GET /KSM_Marek_Herde/ HTTP/1.1" 200 534
 0:0:0:0:0:0:0:1 - - [15/May/2017:22:21:56 +0200] "GET /KSM_Marek_Herde/MyServlet?searchfield=november&operator=RANK HTTP/1.1" 200 440
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /KSM/ HTTP/1.1" 404 959
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 1015
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon.png HTTP/1.1" 404 991
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /favicon.ico HTTP/1.1" 404 973
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 1015
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon.png HTTP/1.1" 404 991
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /favicon.ico HTTP/1.1" 404 973
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /KSM/ HTTP/1.1" 404 959
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 1015
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon.png HTTP/1.1" 404 991
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /favicon.ico HTTP/1.1" 404 973
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 1015
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /apple-touch-icon.png HTTP/1.1" 404 991
+0:0:0:0:0:0:0:1 - - [15/May/2017:23:11:09 +0200] "GET /favicon.ico HTTP/1.1" 404 973
