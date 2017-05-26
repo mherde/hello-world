@@ -43,7 +43,6 @@ public class HTMLDocumentTest extends TestCase {
 		int[] freqs = { 2, 8, 8, 1, 1, 8, 1};
 	
 		for (int i = 0; i < words.length; i++) {
-			System.out.println(words[i]+" "+doc.getTermCount(words[i]));
 			assertEquals(freqs[i], doc.getTermCount(words[i]));
 		}
 	}
@@ -53,9 +52,7 @@ public class HTMLDocumentTest extends TestCase {
 	 */
 	public void testSize() {
 		int nTerms = 89;
-		
-		System.out.println(doc);
-		
+				
 		assertEquals(nTerms, doc.size());
 	}
 

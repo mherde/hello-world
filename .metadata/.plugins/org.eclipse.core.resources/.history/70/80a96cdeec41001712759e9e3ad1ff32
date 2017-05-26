@@ -1,7 +1,0 @@
-package de.unikassel.ir.test;
-
-import de.unikassel.ir.vsr.DocumentImpl;
-
-public class HTMLDocument extends DocumentImpl {
-
-}
