@@ -24,14 +24,21 @@ public class HTMLDocument extends DocumentImpl {
 
 	private Set<URL> links;
 
+	private Stemmer stemmer;
+
 	private org.jsoup.nodes.Document doc;
 
 	public HTMLDocument(URL url) {
 		this.url = url;
+		this.stemmer = new Stemmer();
 		try {
 			Scanner sc = new Scanner(new File("resources/englishST.txt"), "UTF-8");
 			while (sc.hasNext()) {
-				stopwords.add(sc.next());
+				String stopword = sc.next().toLowerCase().trim().replaceAll("[^A-Za-z0-9 -]", "");
+				stemmer.add(stopword.toCharArray(), stopword.length());
+				stemmer.stem();
+				String token = stemmer.toString();
+				stopwords.add(token);
 			}
 			sc.close();
 		} catch (FileNotFoundException e) {
@@ -54,42 +61,31 @@ public class HTMLDocument extends DocumentImpl {
 		/* initialization of the map */
 		this.termsIndex = new HashMap<>();
 
-		Elements images = doc.getElementsByTag("img");
-
-		for (Element img : images) {
-			
-		}
-		
 		Elements elements = doc.getAllElements();
 		String text = doc.text();
-		
 
 		for (Element element : elements) {
 			if (element.attr("title") != null) {
-				text += " "+element.attr("title");
+				text += " " + element.attr("title");
 			}
 			if (element.attr("alt") != null) {
 				text += element.attr("alt");
 			}
 		}
-		
-		
-		
 
 		for (String term : text.toLowerCase().trim().replaceAll("[^A-Za-z0-9 -]", "").split("\\s+|-")) {
-			if (!this.stopwords.contains(term)) {
-				stemmer.add(term.toCharArray(), term.length());
-				stemmer.stem();
-				String token = stemmer.toString();
-				System.out.println(token);
+			stemmer.add(term.toCharArray(), term.length());
+			stemmer.stem();
+			String token = stemmer.toString();
+			if (!this.stopwords.contains(token)) {
 				ArrayList<Integer> positionsOfToken = this.termsIndex.getOrDefault(token, new ArrayList<Integer>());
 				positionsOfToken.add(currentPosition);
 				this.termsIndex.put(token, positionsOfToken);
 				currentPosition++;
 				this.size++;
+				System.out.println(token + " " + size);
 			}
 		}
-		
 
 	}
 

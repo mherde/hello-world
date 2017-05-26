@@ -34,7 +34,6 @@ package de.unikassel.ir.vsr;
 
 */
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -629,9 +628,11 @@ class Stemmer {
 					System.out.println("error reading " + args[i]);
 					break;
 				}
-			} catch (FileNotFoundException e) {
+				in.close();
+			} catch (Exception e) {
 				System.out.println("file " + args[i] + " not found");
 				break;
 			}
+
 	}
 }
