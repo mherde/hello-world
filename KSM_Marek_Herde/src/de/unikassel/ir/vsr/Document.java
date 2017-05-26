@@ -49,28 +49,8 @@ public interface Document extends Iterable<String> {
 	public int getTermCount(String term);
 
 	/**
-	 * Calculation of normalized term frequency of term by normalizing with
-	 * maximal frequency of a term in this document
-	 * 
-	 * @return normalized term frequency of term
-	 */
-	public double getTF(String term);
-
-	/**
-	 * @return length of document vector
-	 */
-	public double getDocLength();
-	
-	
-	/**
-	 * Setting new value of document vector length
-	 * @param docLenght: new value for the length of the document vector
-	 */
-	public void setDocLength(double docLength);
-
-	/**
 	 * Return all positions, where a given term occurs (starting with 0, ordered
-	 * from earlies to last)
+	 * from earliest to last)
 	 * 
 	 * @param term
 	 * @return positions in the document

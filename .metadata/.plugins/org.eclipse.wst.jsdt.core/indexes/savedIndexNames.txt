@@ -1,8 +1,7 @@
 INDEX VERSION 1.3+/Users/marekherde/hello-world/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
-2059618507.index
 2429296539.index
 281987580.index
 1614743041.index
-1461078063.index
-2285577399.index
 1072101631.index
+2285577399.index
+2059618507.index

@@ -1,0 +1,88 @@
+package de.unikassel.ir.vsr;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+import org.cyberneko.html.parsers.DOMParser;
+import org.apache.xerces.parsers.AbstractSAXParser;
+
+
+public class HTMLDocument extends DocumentImpl {
+	
+	private URL url;
+
+	public HTMLDocument(URL url) {
+		this.url = url;
+	}
+	
+	@Override
+	public void read(InputStream input) throws IOException {
+
+		/* represents the current position of scanned words */
+		int currentPosition = 1;
+
+		/* reader to read document */
+		BufferedReader in = new BufferedReader(new InputStreamReader(input));
+
+		/* stores all lines of the document */
+		ArrayList<String[]> lines = new ArrayList<>();
+
+		/* stores currentLine */
+		String currentLine;
+
+		/* reading all lines of document */
+		while ((currentLine = in.readLine()) != null) {
+
+			/* adding line as array of terms */
+			lines.add(currentLine.trim().split("\\s+"));
+		}
+
+		/* initialization of the map */
+		this.termsIndex = new HashMap<>();
+
+		/* iteration over all lines of the document */
+		for (String[] termsOfOneLine : lines) {
+
+			/* iteration over all terms of the current lime */
+			for (String term : termsOfOneLine) {
+
+				/* if word is not listed in map */
+				if (!this.termsIndex.containsKey(term)) {
+
+					/* create an entry with a corresponding arraylist */
+					ArrayList<Integer> positions = new ArrayList<>();
+
+					/* adding position where the current word occurs */
+					positions.add(currentPosition);
+
+					this.termsIndex.put(term, positions);
+				} else {
+
+					/* getting corresponding position list */
+					ArrayList<Integer> positions = this.termsIndex.get(term);
+
+					/* adding position where the current word occurs */
+					positions.add(currentPosition);
+				}
+
+				/* increasing current position */
+				currentPosition++;
+				/* increasing number of scanned words */
+				this.size++;
+			}
+		}
+
+		determineMaximalFrequency();
+
+	}	
+	public Set<URL> getExtractedLinks(){
+		
+		return null;
+	}
+
+}

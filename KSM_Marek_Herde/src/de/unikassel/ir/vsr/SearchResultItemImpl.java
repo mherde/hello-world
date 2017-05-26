@@ -16,18 +16,20 @@ public class SearchResultItemImpl implements SearchResultItem {
 	@Override
 	public int compareTo(SearchResultItem o) {
 
-		if (this.getSimilarityScore() > o.getSimilarityScore()) {
+		if (this.equals(o)) {
+			/*
+			 * the search results have an equal similarity score, because they
+			 * are identical objects regarding the equal method
+			 */
+			return 0;
+		} else if (this.getSimilarityScore() > o.getSimilarityScore()) {
 			/* this search result has a greater similarity score */
 			return -1;
-		} else if (this.getSimilarityScore() < o.getSimilarityScore()) {
-			/* this search result has a smaller similarity score */
+		} else {
+			/* this search result has a smaller or equal similarity score */
 			return 1;
-		} else if (this.equals(o)) {
-			/* the search results have an equal similarity score */
-			return 0;
 		}
 
-		return 1;
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class SearchResultItemImpl implements SearchResultItem {
 
 	@Override
 	public String toString() {
-		return "Document: " + this.document.getId() + "\t score: " + this.similarityScore;
+		return "(" + this.document.getId() + ", " + this.similarityScore + ")";
 	}
 
 }

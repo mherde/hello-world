@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="IndexTest" project="KSM_Marek_Herde" tests="2" started="2" failures="0" errors="0" ignored="0">
-  <testsuite name="de.unikassel.ir.test.IndexTest" time="0.459">
-    <testcase name="testCosineSimilarities" classname="de.unikassel.ir.test.IndexTest" time="0.236"/>
-    <testcase name="testTokenWeights" classname="de.unikassel.ir.test.IndexTest" time="0.223"/>
-  </testsuite>
-</testrun>

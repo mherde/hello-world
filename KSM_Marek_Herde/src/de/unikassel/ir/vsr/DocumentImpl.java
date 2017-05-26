@@ -17,25 +17,28 @@ public class DocumentImpl implements Document {
 	/**
 	 * mapping between term and an list of position where this term occurs
 	 */
-	private HashMap<String, ArrayList<Integer>> termsIndex;
+	protected HashMap<String, ArrayList<Integer>> termsIndex;
 	/**
 	 * represents size or rather number of words in this document
 	 */
-	private int size = 0;
+	protected int size = 0;
 	/**
 	 * represents the maximal frequency of term in this document
 	 */
-	private int maximalFrequency = 1;
+	protected int maximalFrequency = 1;
 	/**
 	 * private double length of document vector
 	 */
-	private double docLength = 0.;
+	protected double docLength = 0.;
 
 	/**
 	 * constructor initializing document id
 	 */
 	public DocumentImpl(String fileName) {
 		this.id = fileName;
+	}
+	
+	public DocumentImpl() {
 	}
 
 	@Override
@@ -114,7 +117,7 @@ public class DocumentImpl implements Document {
 	/**
 	 * calculation of maximal frequency of a term in the document
 	 */
-	private void determineMaximalFrequency() {
+	protected void determineMaximalFrequency() {
 		/* iteration over all terms */
 		for (String term : this.termsIndex.keySet()) {
 
@@ -168,20 +171,39 @@ public class DocumentImpl implements Document {
 		return this.size;
 	}
 
-	@Override
+	/**
+	 * Calculation of normalized term frequency of term by normalizing with
+	 * maximal frequency of a term in this document
+	 * 
+	 * @return normalized term frequency of term
+	 */
 	public double getTF(String term) {
 		double termCount = this.getTermCount(term);
 
 		/* normalizing term frequency */
 		return termCount / this.maximalFrequency;
 	}
-
+	
 	@Override
+	public String toString(){
+		String toString = "";
+		for(String term : this.termsIndex.keySet()){
+			toString += term+"->positions: "+this.termsIndex.get(term)+" \n";
+		}
+		return toString;
+	}
+
+	/**
+	 * @return length of document vector
+	 */
 	public double getDocLength() {
 		return this.docLength;
 	}
 
-	@Override
+	/**
+	 * Setting new value of document vector length
+	 * @param docLenght: new value for the length of the document vector
+	 */
 	public void setDocLength(double docLength) {
 		this.docLength = docLength;
 	}

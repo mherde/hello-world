@@ -9,14 +9,56 @@
 <body>
 	<center>
 		<h1>Moogle</h1>
-		<%@ page import="de.unikassel.ir.webapp.MyServlet"%>
-		<form target="_blank" action="MyServlet">
+		<%@ page import="de.unikassel.ir.webapp.SearchEngine"%>
+		<%@ page import="java.util.List"%>
+		<form>
 			<input type="text" name="searchfield"> <input type="submit"
-				value="search" /> <br> <br> <select name="operator">
+				name="search" /> <br> <br> <select name="operator">
 				<option>RANK</option>
 				<option>OR</option>
 				<option>AND</option>
 			</select>
 		</form>
+
+		<%
+			String search = request.getParameter("search");
+
+			if (search != null) {
+
+				/* getting content from the search field */
+				String searchterm = request.getParameter("searchfield");
+
+				/* determining the used boolean operator */
+				String operator = request.getParameter("operator");
+
+				/* printing some information */
+				out.println("Moogle found the following documents w.r.t. your query:");
+				out.println("<br/><br/>");
+
+				/* creation of new search engine to search for documents */
+				SearchEngine searcher = new SearchEngine();
+
+				/* stores the corresponding documents */
+				List<String> result = null;
+
+				/* checking which booleanOperator is used */
+				if (operator.equals("OR")) {
+					/* OR operator */
+					result = searcher.testQuery(searchterm, false);
+				} else if (operator.equals("AND")) {
+					/* AND operator */
+					result = searcher.testQuery(searchterm, true);
+				} else {
+					/* RANKED operator */
+					result = searcher.testRankedQuery(searchterm);
+				}
+
+				/* printing all documents */
+				for (String s : result) {
+					out.println(s);
+					out.println("<br/><br/>");
+				}
+			}
+		%>
 	</center>
 </html>

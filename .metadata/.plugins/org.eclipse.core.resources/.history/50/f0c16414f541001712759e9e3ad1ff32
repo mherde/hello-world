@@ -1,0 +1,48 @@
+package de.unikassel.ir.vsr;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Set;
+
+import org.apache.xerces.parsers.DOMParser;
+import org.cyberneko.html.HTMLScanner;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+
+
+public class HTMLDocument extends DocumentImpl {
+
+	private URL url;
+
+	public HTMLDocument(URL url) {
+		this.url = url;
+	}
+
+	@Override
+	public void read(InputStream input) throws IOException {
+		try {
+
+			DOMParser parser = new DOMParser();
+
+			
+
+			parser.parse(new InputSource(input));
+			
+			System.out.println(parser.getDocument());
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public Set<URL> getExtractedLinks() {
+
+		return null;
+	}
+
+}

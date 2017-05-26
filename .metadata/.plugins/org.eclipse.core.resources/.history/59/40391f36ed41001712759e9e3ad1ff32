@@ -1,0 +1,12 @@
+package de.unikassel.ir.vsr;
+
+import java.net.URL;
+
+public class HTMLDocument extends DocumentImpl {
+
+	public HTMLDocument(URL url) {
+		super(fileName);
+		// TODO Auto-generated constructor stub
+	}
+
+}

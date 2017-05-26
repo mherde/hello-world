@@ -1,5 +1,6 @@
 package de.unikassel.ir.vsr;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TokenOccurrenceImpl implements TokenOccurrence {
@@ -15,8 +16,12 @@ public class TokenOccurrenceImpl implements TokenOccurrence {
 
 	/** list of positions where the token occurs */
 	private List<Integer> positions;
-	
-	/** tf-idf */
+
+	/**
+	 * flag, because positions counting is different in this class from the
+	 * document class
+	 */
+	private boolean positionFlag = true;
 
 	/**
 	 * constructor to initialize all important values
@@ -28,26 +33,30 @@ public class TokenOccurrenceImpl implements TokenOccurrence {
 	public TokenOccurrenceImpl(Document docRef, TokenInfo tokenInfo, String token) {
 		this.docRef = docRef;
 		this.tokenInfo = tokenInfo;
-		this.documentTF = this.docRef.getTF(token);
-		this.positions = this.docRef.getTermPositions(token);
+		this.documentTF = ((DocumentImpl) this.docRef).getTF(token);
+
+		/* counting positions ascending from 0 instead of from 1 */
+		this.positions = new ArrayList<Integer>();
+		this.positions.addAll(this.docRef.getTermPositions(token));
+
 	}
 
 	@Override
 	public int compareTo(TokenOccurrence o) {
 
-		if (this.getWeight() > o.getWeight()) {
+		if (this.equals(o)) {
+			/*
+			 * weights of both token occurrences are equal, becaue they are
+			 * identical objects regarding equal method
+			 */
+			return 0;
+		} else if (this.getWeight() > o.getWeight()) {
 			/* this token occurrence has a greater weight */
 			return -1;
-		} else if (this.getWeight() < o.getWeight()) {
-			/* this token occurrence has a smaller weight */
+		} else {
+			/* this token occurrence has a smaller or equal weight */
 			return 1;
-		} else if (this.equals(o)) {
-			/* weights of both token occurrences are equal */
-			return 0;
 		}
-
-		return 1;
-
 	}
 
 	@Override
@@ -63,12 +72,20 @@ public class TokenOccurrenceImpl implements TokenOccurrence {
 
 	@Override
 	public List<Integer> getPositions() {
+		if (this.positionFlag) {
+			/* counting from 0 instead from 1 like in document class */
+			for (int i = 0; i < this.positions.size(); i++) {
+				this.positions.add(i, this.positions.get(i) - 1);
+			}
+			this.positionFlag = false;
+		}
+
 		return this.positions;
 	}
 
 	@Override
 	public String toString() {
-		return this.docRef.getId() + " -> " + this.getWeight();
+		return String.format("%-15s -> %.15f", this.docRef.getId(), this.getWeight());
 	}
 
 }

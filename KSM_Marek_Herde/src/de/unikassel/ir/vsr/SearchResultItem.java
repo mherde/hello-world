@@ -39,7 +39,4 @@ public interface SearchResultItem extends Comparable<SearchResultItem> {
 	 */
 	public abstract String toString();
 	
-	@Override
-	public abstract int hashCode();
-	
 }

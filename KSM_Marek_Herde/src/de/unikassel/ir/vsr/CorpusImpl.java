@@ -2,24 +2,44 @@ package de.unikassel.ir.vsr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class CorpusImpl implements Corpus {
 
 	/**
 	 * contains all documents
 	 */
-	private ArrayList<Document> corpus = new ArrayList<>();
+	private List<Document> allDocuments = new ArrayList<Document>();
+	/**
+	 * mapping between term and documents, containing the mapped term
+	 */
+	private HashMap<String, List<Document>> corpus = new HashMap<>();
 	/**
 	 * number of documents in corpus
 	 */
 	private int size;
-	
+
 	@Override
 	public void addDocument(Document doc) {
 
 		/* adding document */
-		corpus.add(doc);
+		allDocuments.add(doc);
+
+		/* creating of mapping between term and its documents */
+		for (String term : doc) {
+			if (corpus.containsKey(term)) {
+				List<Document> documentList = corpus.get(term);
+				documentList.add(doc);
+			} else {
+				List<Document> documentList = new ArrayList<Document>();
+				documentList.add(doc);
+				corpus.put(term, documentList);
+
+			}
+		}
 
 		/* increasing number of documents */
 		this.size++;
@@ -29,38 +49,26 @@ public class CorpusImpl implements Corpus {
 	public Iterator<Document> iterator() {
 
 		/* returning iterator on the corpus */
-		return corpus.iterator();
+		return this.allDocuments.iterator();
 	}
 
 	@Override
 	public Collection<Document> getDocumentsContainingAll(String... terms) {
 		/* saves the documents that contains all given terms */
-		Collection<Document> result = new ArrayList<>();
+		Collection<Document> result = new HashSet<>();
 
-		/* iteration over all documents */
-		Iterator<Document> iterator = this.iterator();
-		while (iterator.hasNext()) {
-			Document doc = iterator.next();
-			boolean match = true;
-
-			/*
-			 * if a the current document does not contain a given term, it does
-			 * not match the query -> break further investigation of this
-			 * document
-			 */
-			for (String term : terms) {
-				if (doc.getTermCount(term) == 0) {
-					match = false;
-					break;
-				}
-			}
-
-			/* if document matches query -> adding document to result */
-			if (match) {
-				result.add(doc);
+		/* generating intersection of the query terms' documents list */
+		for (String term : terms) {
+			term = term.toLowerCase();
+			/* initial adding of a document list */
+			if (result.size() == 0) {
+				result.addAll(this.corpus.get(term));
+			} else {
+				/* intersection of current result with the document list of current term */
+				result.retainAll(this.corpus.get(term));
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -68,37 +76,19 @@ public class CorpusImpl implements Corpus {
 	public Collection<Document> getDocumentsContainingAny(String... terms) {
 		/* saves the documents that contains at least one given term */
 		Collection<Document> result = new ArrayList<>();
-		
-		/* iteration over all documents */
-		Iterator<Document> iterator = this.iterator();
-		while (iterator.hasNext()) {
-			Document doc = iterator.next();
-			boolean match = false;
-			
-			/*
-			 * if a the current document does contain a given term, it does
-			 * match the query -> break further investigation of this
-			 * document
-			 */
-			for (String term : terms) {
-				if (doc.getTermCount(term) > 0) {
-					match = true;
-					break;
-				}
-			}
-			
-			/* if document matches query -> adding document to result */
-			if (match) {
-				result.add(doc);
-			}
+
+		/* generating set union of query terms' document lists */
+		for (String term : terms) {
+			term = term.toLowerCase();
+			result.addAll(this.corpus.get(term));
 		}
-		
+
 		return result;
 	}
 
 	@Override
 	public int size() {
-		
+
 		/* return number of documents in this corpus */
 		return this.size;
 	}

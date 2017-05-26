@@ -1,0 +1,13 @@
+package de.unikassel.ir.vsr;
+
+import java.net.URL;
+
+public class HTMLDocument extends DocumentImpl {
+	
+	private URL url;
+
+	public HTMLDocument(URL url) {
+		
+	}
+
+}

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="HTMLDocumentTest" project="KSM_Marek_Herde" tests="3" started="3" failures="0" errors="3" ignored="0">
+  <testsuite name="de.unikassel.ir.test.HTMLDocumentTest" time="0.452">
+    <testcase name="testLinks" classname="de.unikassel.ir.test.HTMLDocumentTest" time="0.337">
+      <error>java.lang.NullPointerException
+	at de.unikassel.ir.vsr.DocumentImpl.toString(DocumentImpl.java:190)
+	at java.lang.String.valueOf(String.java:2994)
+	at java.io.PrintStream.println(PrintStream.java:821)
+	at de.unikassel.ir.test.HTMLDocumentTest.setUp(HTMLDocumentTest.java:32)
+	at junit.framework.TestCase.runBare(TestCase.java:139)
+	at junit.framework.TestResult$1.protect(TestResult.java:122)
+	at junit.framework.TestResult.runProtected(TestResult.java:142)
+	at junit.framework.TestResult.run(TestResult.java:125)
+	at junit.framework.TestCase.run(TestCase.java:129)
+	at junit.framework.TestSuite.runTest(TestSuite.java:252)
+	at junit.framework.TestSuite.run(TestSuite.java:247)
+	at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:86)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:678)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+
+</error>
+    </testcase>
+    <testcase name="testTerms" classname="de.unikassel.ir.test.HTMLDocumentTest" time="0.059">
+      <error>java.lang.NullPointerException
+	at de.unikassel.ir.vsr.DocumentImpl.toString(DocumentImpl.java:190)
+	at java.lang.String.valueOf(String.java:2994)
+	at java.io.PrintStream.println(PrintStream.java:821)
+	at de.unikassel.ir.test.HTMLDocumentTest.setUp(HTMLDocumentTest.java:32)
+	at junit.framework.TestCase.runBare(TestCase.java:139)
+	at junit.framework.TestResult$1.protect(TestResult.java:122)
+	at junit.framework.TestResult.runProtected(TestResult.java:142)
+	at junit.framework.TestResult.run(TestResult.java:125)
+	at junit.framework.TestCase.run(TestCase.java:129)
+	at junit.framework.TestSuite.runTest(TestSuite.java:252)
+	at junit.framework.TestSuite.run(TestSuite.java:247)
+	at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:86)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:678)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+
+</error>
+    </testcase>
+    <testcase name="testSize" classname="de.unikassel.ir.test.HTMLDocumentTest" time="0.054">
+      <error>java.lang.NullPointerException
+	at de.unikassel.ir.vsr.DocumentImpl.toString(DocumentImpl.java:190)
+	at java.lang.String.valueOf(String.java:2994)
+	at java.io.PrintStream.println(PrintStream.java:821)
+	at de.unikassel.ir.test.HTMLDocumentTest.setUp(HTMLDocumentTest.java:32)
+	at junit.framework.TestCase.runBare(TestCase.java:139)
+	at junit.framework.TestResult$1.protect(TestResult.java:122)
+	at junit.framework.TestResult.runProtected(TestResult.java:142)
+	at junit.framework.TestResult.run(TestResult.java:125)
+	at junit.framework.TestCase.run(TestCase.java:129)
+	at junit.framework.TestSuite.runTest(TestSuite.java:252)
+	at junit.framework.TestSuite.run(TestSuite.java:247)
+	at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:86)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:678)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+
+</error>
+    </testcase>
+  </testsuite>
+</testrun>
