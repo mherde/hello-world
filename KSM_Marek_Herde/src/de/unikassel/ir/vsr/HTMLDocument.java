@@ -84,6 +84,8 @@ public class HTMLDocument extends DocumentImpl {
 
 		/* parsing HTML document with JSoup parser */
 		this.parsedHTMLdoc = Jsoup.parse(input, "UTF-8", this.url.toString());
+		/* removing java script */
+		parsedHTMLdoc.select("script,.hidden,style,span").remove();
 		parsedHTMLdoc.setBaseUri(this.url.toString());
 
 		/* initialization of the map */
@@ -103,7 +105,7 @@ public class HTMLDocument extends DocumentImpl {
 				text += " " + element.attr("title");
 			}
 			if (element.attr("alt") != null) {
-				text += element.attr("alt");
+				text += " " + element.attr("alt");
 			}
 		}
 
@@ -163,7 +165,9 @@ public class HTMLDocument extends DocumentImpl {
 			for (Element linkElement : linkElements) {
 				try {
 					/* extracting link and adding it to set of links */
-					links.add(new URL(linkElement.attr("abs:href").toString()));
+					String url = linkElement.attr("abs:href").toString().replaceAll(" ", "");
+					if (url.length() > 0)
+						links.add(new URL(url));
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}
