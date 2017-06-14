@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenInfo"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.SearchResultItem"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.SearchResultItemImpl"/>
-<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenInfoImpl"/>
-<fullyQualifiedTypeName name="java.util.TreeSet"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenOccurrence"/>
 <fullyQualifiedTypeName name="java.net.URL"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="com.sun.org.apache.xerces.internal.parsers.DOMParser"/>
@@ -28,6 +23,19 @@
 <fullyQualifiedTypeName name="java.util.Scanner"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
-<fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.HTMLDocument"/>
+<fullyQualifiedTypeName name="java.util.HashSet"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.InvertedIndexImpl"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.PhraseSearch"/>
+<fullyQualifiedTypeName name="java.util.Collections"/>
+<fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.util.TreeSet"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenOccurrence"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenOccurrenceImpl"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenInfo"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenInfoImpl"/>
+<fullyQualifiedTypeName name="java.util.AbstractMap.SimpleEntry"/>
+<fullyQualifiedTypeName name="Pair"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
 </qualifiedTypeNameHistroy>

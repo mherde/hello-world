@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="HTMLDocumentTest" project="KSM_Marek_Herde" tests="3" started="3" failures="0" errors="0" ignored="0">
-  <testsuite name="de.unikassel.ir.test.HTMLDocumentTest" time="2.607">
-    <testcase name="testLinks" classname="de.unikassel.ir.test.HTMLDocumentTest" time="2.011"/>
-    <testcase name="testTerms" classname="de.unikassel.ir.test.HTMLDocumentTest" time="0.307"/>
-    <testcase name="testSize" classname="de.unikassel.ir.test.HTMLDocumentTest" time="0.289"/>
-  </testsuite>
-</testrun>

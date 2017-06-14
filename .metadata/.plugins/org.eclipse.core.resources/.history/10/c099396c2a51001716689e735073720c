@@ -1,0 +1,237 @@
+package de.unikassel.ir.vsr;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public class PhraseSearchIndex extends InvertedIndexImpl implements PhraseSearch {
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(List<String> phrase) {
+
+		/* documents containing phrase */
+		Map<Document, List<Integer>> result = new HashMap<>();
+
+		/* ensuring phrase not to be null and phrase has at least one element */
+		if (phrase == null || phrase.isEmpty())
+			return result;
+
+		/* creating list for every term in phrase, lists are sorted after document and position */
+		List<List<Pair>> lists = this.createSortedLists(phrase);
+
+		/* if no possible phrase was found -> return */
+		if (lists.isEmpty()) {
+			return result;
+		}
+		
+		/* pointers as index referencing pair in a token's list */
+		int[] pointers = new int[phrase.size()];
+		Arrays.fill(pointers, 0);
+
+
+		
+		/* itertation over all possible positions of the phrase's first term */
+		firstTerm: while(pointers[0] < lists.get(0).size()){
+
+			/* match as base */
+			boolean match = true;
+			
+		
+			
+
+			for (int j = 1; j < pointers.length; j++) {
+				
+				Pair pair_j_1 = lists.get(j-1).get(pointers[j-1]);
+				Pair pair_j = lists.get(j).get(pointers[j]);
+				
+				String dk_j_1 = pair_j_1.getDocument().getId().toString();
+				String dk_j = pair_j.getDocument().getId().toString();
+				
+				int pk_j_1 = pair_j_1.getPosition();
+				int pk_j = pair_j.getPosition();
+				
+				while(!(dk_j.compareTo(dk_j_1) > 0 || (dk_j.equals(dk_j_1) && pk_j >= pk_j_1 +1 ))){
+					if(pointers[j] < lists.get(j).size()-1){		
+						pointers[j]++;
+						pair_j = lists.get(j).get(pointers[j]);
+						dk_j = pair_j.getDocument().getId().toString();
+						pk_j = pair_j.getPosition();
+					} else {
+						break firstTerm;
+					}
+				} 
+
+				if (!dk_j.equals(dk_j_1)
+						|| pk_j != pk_j_1+1) {
+					match = false;
+					break;
+				}
+			}
+
+			if (match) {
+				Pair resultPair = lists.get(0).get(pointers[0]);
+				List<Integer> positions = result.getOrDefault(resultPair.getDocument(), new ArrayList<Integer>());
+				positions.add(resultPair.getPosition());
+				result.put(resultPair.getDocument(), positions);
+			}
+			
+			pointers[0]++;
+		}
+
+		return result;
+
+	}
+
+	/**
+	 * Creating a list of lists of pairs sorted by document id and position
+	 * @param phrase determine number of lists and content of these lists
+	 * @return list of lists sorted after document id and position of a pair
+	 */
+	private List<List<Pair>> createSortedLists(List<String> phrase) {
+
+		/* list that contains all sorted lists */
+		List<List<Pair>> lists = new ArrayList<>();
+
+		/* for every token in phrase create list */
+		for (String token : phrase) {
+
+			/* ignoring capitalization */
+			token = token.toLowerCase();
+
+			/* if invertedIndex does not contain that token, phrase is not in corpus */
+			if (tokenHash.get(token) == null) {
+				return new ArrayList<>();
+			}
+
+			/* contains the pairs of document and position regarding the current token */
+			List<Pair> sortedList = new ArrayList<>();
+
+			/* filling sortedList with these pairs of document and position */
+			for (TokenOccurrence occ : tokenHash.get(token).getTokenOccurrenceList()) {
+				/* adding for every position in document a pair of this document and position to list */
+				for (int position : occ.getPositions()) {
+					sortedList.add(new Pair(occ.getDocument(), position));
+				}
+			}
+			
+			/* sorting list regarding comparedTo() in class Pair */
+			Collections.sort(sortedList);
+
+			lists.add(sortedList);
+		}
+		
+		return lists;
+
+	}
+
+	private class Pair implements Comparable<Pair> {
+
+		private Document doc;
+		private int position;
+
+		public Pair(Document doc, int position) {
+			this.doc = doc;
+			this.position = position;
+		}
+
+		public Document getDocument() {
+			return this.doc;
+		}
+
+		public int getPosition() {
+			return this.position;
+		}
+
+		@Override
+		public int compareTo(Pair o) {
+			int comp = this.getDocument().getId().compareTo(o.getDocument().getId());
+			
+			if (comp != 0) {
+				return comp;
+			} else {
+				return this.getPosition() > o.getPosition() ? +1 : this.getPosition() < o.getPosition() ? -1 : 0;
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "(" + this.getDocument().getId() + ", " + this.getPosition() + ")";
+		}
+
+	}
+
+	public PhraseSearchIndex(Corpus corpus) {
+		super(corpus);
+	}
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(String phrase) {
+
+		String[] terms = phrase.trim().split("\\s+");
+
+		return this.searchPhrase(Arrays.asList(terms));
+
+	}
+
+	@Override
+	public List<String> getContext(String phrase, Document doc, int pos) {
+		String[] terms = phrase.trim().split("\\s+");
+		DocumentImpl document = (DocumentImpl) doc;
+		Map<String, ArrayList<Integer>> termsIndex = document.getTermsIndex();
+		List<String> context = new ArrayList<>();
+		String[] beforeArray = new String[5];
+		String[] afterArray = new String[5];
+		int numberOfFilledPositions = 0;
+		
+		
+
+		
+		for(Entry<String, ArrayList<Integer>> entry : termsIndex.entrySet()){
+			int posBefore  = pos-1;
+			int posAfter = pos + terms.length;
+			
+			for(int i = 0; i<5; i++){
+				if(entry.getValue().contains(posBefore)){
+					beforeArray[posBefore-pos+5] = entry.getKey();
+					numberOfFilledPositions++;
+				}
+			
+				if(entry.getValue().contains(posAfter)){
+					afterArray[posAfter-pos-terms.length] = entry.getKey();
+					numberOfFilledPositions++;
+				}
+				
+				posBefore--;
+				posAfter++;
+			}
+		}
+		
+		StringBuilder before = new StringBuilder();
+		StringBuilder after = new StringBuilder();
+		
+		for(int i = 0; i<5; i++){
+			if(beforeArray[i] != null){
+				before.append(beforeArray[i]);
+				if(i != 4)
+					before.append(" ");
+			}
+			if(afterArray[i] != null){
+				after.append(afterArray[i]);
+				if(i != 4)
+					after.append(" ");
+			}
+		}
+		
+		context.add(before.toString());
+		context.add(after.toString());
+		
+		
+		
+		return context;
+	}
+
+}

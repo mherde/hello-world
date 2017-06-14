@@ -8,11 +8,13 @@ import java.util.TreeSet;
 public class InvertedIndexImpl implements InvertedIndex {
 
 	/** data structure of the inverted index */
-	private HashMap<String, TokenInfo> tokenHash;
+	protected HashMap<String, TokenInfo> tokenHash;
 	/** reference to corpus containing all documents */
-	private Corpus corpus;
+	protected Corpus corpus;
 	/** save maximal term frequency of a term in a document */
-	private int maximalTermFrequency = 0;
+	protected int maximalTermFrequency = 0;
+	/** inverted index string representation */
+	protected String invertedIndex = "";
 
 	/**
 	 * creation of an index given a corpus of documents
@@ -136,7 +138,7 @@ public class InvertedIndexImpl implements InvertedIndex {
 
 	@Override
 	public int getMaxFrequency() {
-		
+
 		if (this.maximalTermFrequency == 0) {
 			/*
 			 * stores the total maximal frequency of a token in corpus' document
@@ -283,26 +285,28 @@ public class InvertedIndexImpl implements InvertedIndex {
 
 	@Override
 	public String toString() {
-		/* String representation of inverted index */
-		String s = "[\n";
+		if (this.invertedIndex.equals("")) {
+			/* String representation of inverted index */
+			this.invertedIndex = "[\n";
 
-		/* iteration over all tokens */
-		for (String token : this.tokenHash.keySet()) {
+			/* iteration over all tokens */
+			for (String token : this.tokenHash.keySet()) {
 
-			/* printing token with its idf and its occurrences */
-			TokenInfo info = this.getTokenInfo(token);
-			s += String.format(" %-20s (%.15f) -> [", token, info.getIdf());
-			for (TokenOccurrence occ : info.getTokenOccurrenceList()) {
-				if (occ != info.getTokenOccurrenceList().last())
-					s += " " + occ.toString() + "; ";
-				else
-					s += " " + occ.toString() + " ]\n";
+				/* printing token with its idf and its occurrences */
+				TokenInfo info = this.getTokenInfo(token);
+				this.invertedIndex += String.format(" %-20s (%.15f) -> [", token, info.getIdf());
+				for (TokenOccurrence occ : info.getTokenOccurrenceList()) {
+					if (occ != info.getTokenOccurrenceList().last())
+						this.invertedIndex += " " + occ.toString() + "; ";
+					else
+						this.invertedIndex += " " + occ.toString() + " ]\n";
+				}
 			}
+
+			this.invertedIndex += "]";
 		}
 
-		s += "]";
-
-		return s;
+		return invertedIndex;
 	}
 
 }

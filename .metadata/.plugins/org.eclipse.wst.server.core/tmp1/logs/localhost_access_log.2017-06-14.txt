@@ -1,0 +1,6 @@
+127.0.0.1 - - [14/Jun/2017:15:48:08 +0200] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [14/Jun/2017:15:48:09 +0200] "GET /KSM_Marek_Herde/ HTTP/1.1" 200 505
+0:0:0:0:0:0:0:1 - - [14/Jun/2017:15:48:19 +0200] "GET /KSM_Marek_Herde/?searchfield=executive+committee&search=Senden&operator=RANK HTTP/1.1" 200 1824
+0:0:0:0:0:0:0:1 - - [14/Jun/2017:15:48:27 +0200] "GET /KSM_Marek_Herde/?searchfield=executive+committee&search=Senden&operator=AND HTTP/1.1" 200 674
+127.0.0.1 - - [14/Jun/2017:15:56:58 +0200] "GET / HTTP/1.1" 404 951
+127.0.0.1 - - [14/Jun/2017:17:30:32 +0200] "GET / HTTP/1.1" 404 951

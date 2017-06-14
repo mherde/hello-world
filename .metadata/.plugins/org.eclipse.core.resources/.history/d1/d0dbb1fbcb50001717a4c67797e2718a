@@ -1,0 +1,102 @@
+package de.unikassel.ir.vsr;
+
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+public class PhraseSearchIndex extends InvertedIndexImpl implements PhraseSearch {
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(List<String> phrase) {
+
+		/* documents containing phrase */
+		Map<Document, List<Integer>> answer = new HashMap<>();
+
+		/* ensuring phrase not to be null and phrase has at least one element */
+		if (phrase == null || phrase.isEmpty())
+			return answer;
+		
+		
+		/* array of pointers for terms in phrase */
+		// int[] pointers = new int[phrase.size()];
+		// Arrays.fill(pointers, 0);
+
+		Iterator<String> terms = phrase.iterator();
+		int k = 1;
+		String t = terms.next();
+		for (TokenOccurrence occ : tokenHash.get(t).getTokenOccurrenceList()) {
+			answer.put(occ.getDocument(), occ.getPositions());
+		}
+		t = terms.next();
+		while (terms.hasNext() && answer != null) {
+			TreeSet<TokenOccurrence> nextDocs = this.tokenHash.get(t).getTokenOccurrenceList();
+			answer = forwardPositionalIntersect(answer, nextDocs, k);
+			k++;
+			t = terms.next();
+		}
+
+		return answer;
+	}
+
+	private Map<Document, List<Integer>> forwardPositionalIntersect(TreeSet<TokenOccurrence> p1,
+			TreeSet<TokenOccurrence> p2, int k) {
+		
+		Map<Document, List<Integer>> answer = new HashMap<>();
+		
+		Iterator<TokenOccurrence> p1Iterator = p1.iterator();
+		Iterator<TokenOccurrence> p2Iterator = p2.iterator();
+		
+		while(p1Iterator.hasNext() && p2Iterator.hasNext()){
+			TokenOccurrence doc1 = p1Iterator.next();
+			TokenOccurrence doc2 = p2Iterator.next();
+			if(doc1.getDocument().getId().equals(doc2.getDocument().getId())){
+				
+				Iterator<Integer> pp1 = doc1.getPositions().iterator();
+				Iterator<Integer> pp2 = doc1.getPositions().iterator();
+				
+				while(pp1.hasNext() && pp2.hasNext()){
+					int pos1 = pp1.next();
+					int pos2 = pp2.next();
+					if(pos2-pos1 == k){
+						List<Integer> doc = answer.getOrDefault(doc1.getDocument(), new ArrayList<Integer>)
+					}
+				}	
+
+			}
+
+		}
+
+		private class Pair <L, R> implements Comparable {
+			private L key;
+			private R value;
+			public Pair(L key, R value){
+				this.key = key;
+				this.value = value;
+			}
+		}
+		
+
+		return answer;
+	}
+
+	public PhraseSearchIndex(Corpus corpus) {
+		super(corpus);
+	}
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(String phrase) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getContext(String phrase, Document doc, int pos) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

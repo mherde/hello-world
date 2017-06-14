@@ -18,13 +18,26 @@ import org.jsoup.select.Elements;
 
 public class HTMLDocument extends DocumentImpl {
 
-	/** global reference for the set containing all stop words */
-	public static HashSet<String> stopwords = createStopWordList();
+	/**
+	 * global reference for the set containing all stop words, it is global
+	 * because the stop word set shall be calculated only once and not for every
+	 * new created HTMLDocument
+	 */
+	public static HashSet<String> stopwords = createStopWordSet();
 
+	/**
+	 * link to the HTMLDocument
+	 */
 	private URL url;
 
+	/**
+	 * links that are referenced by this HTMLDocument
+	 */
 	private Set<URL> links;
 
+	/**
+	 * datastructure for documents in jsoup
+	 */
 	private org.jsoup.nodes.Document parsedHTMLdoc;
 
 	/**
@@ -32,21 +45,29 @@ public class HTMLDocument extends DocumentImpl {
 	 * 
 	 * @return set of stemmed stop words
 	 */
-	private static HashSet<String> createStopWordList() {
+	private static HashSet<String> createStopWordSet() {
 
 		/* porter stemmer */
 		Stemmer stemmer = new Stemmer();
 
 		/* contains stemmed stop words */
-		HashSet<String> stopWordsList = new HashSet<String>();
+		HashSet<String> stopWordsSet = new HashSet<String>();
 		try {
 
 			/* scanner to read file of stop words */
 			Scanner sc = new Scanner(new File("resources/englishST.txt"), "UTF-8");
 			while (sc.hasNext()) {
 
-				/* parsing stop word in correct form */
-				String stopword = sc.next().toLowerCase().trim().replaceAll("[^A-Za-z0-9 -]", "");
+				/*
+				 * parsing stop word in correct form; for the german stopwords
+				 * the corresponding umlauts have to be added to the regex in
+				 * replaceAll
+				 */
+				/*
+				 * !! if numbers shall be included the expression in replaceAll,
+				 * it would be replaceAll("[^A-Za-z0-9 -]","") !!
+				 */
+				String stopword = sc.next().toLowerCase().trim().replaceAll("[^A-Za-z -]", "");
 
 				/* stemming stop word */
 				stemmer.add(stopword.toCharArray(), stopword.length());
@@ -54,8 +75,7 @@ public class HTMLDocument extends DocumentImpl {
 				String token = stemmer.toString();
 
 				/* adding stemmed stop word to set */
-				stopWordsList.add(token);
-
+				stopWordsSet.add(token);
 			}
 
 			/* closing scanner after work */
@@ -64,7 +84,7 @@ public class HTMLDocument extends DocumentImpl {
 			e.printStackTrace();
 		}
 
-		return stopWordsList;
+		return stopWordsSet;
 	}
 
 	/**
@@ -80,15 +100,25 @@ public class HTMLDocument extends DocumentImpl {
 	public void read(InputStream input) throws IOException {
 
 		/* represents the current position of scanned words */
-		int currentPosition = 1;
+		int currentPosition = 0;
+
+		/* resetting size */
+		this.size = 0;
+
+		/*
+		 * ensuring that with every read the set of url will be updated, if
+		 * getExtractedLinks() is called
+		 */
+		this.links = null;
 
 		/* parsing HTML document with JSoup parser */
 		this.parsedHTMLdoc = Jsoup.parse(input, "UTF-8", this.url.toString());
-		/* removing java script */
-		parsedHTMLdoc.select("script,.hidden,style,span").remove();
 		parsedHTMLdoc.setBaseUri(this.url.toString());
 
-		/* initialization of the map */
+		/* removing java script and things not displayed on website */
+		parsedHTMLdoc.select("script,.hidden,style,span").remove();
+
+		/* initialization of the map containing all terms and its positions */
 		this.termsIndex = new HashMap<>();
 
 		/* all elements of the parsed HTML document */
@@ -97,8 +127,8 @@ public class HTMLDocument extends DocumentImpl {
 		String text = parsedHTMLdoc.text();
 
 		/*
-		 * iteration over all elements and adding text titles and alt tags to
-		 * the whole text
+		 * iteration over all elements in order to add text titles and alt tags
+		 * to the whole text
 		 */
 		for (Element element : elements) {
 			if (element.attr("title") != null) {
@@ -114,9 +144,14 @@ public class HTMLDocument extends DocumentImpl {
 
 		/*
 		 * iteration over all terms of the HTML document, many replacements are
-		 * done before and and also a split
+		 * done before and also a split; for the german websites the
+		 * corresponding umlauts have to be added to the regex in replaceAll
 		 */
-		for (String term : text.toLowerCase().trim().replaceAll("[^A-Za-z0-9 -]", "").split("\\s+|-")) {
+		/*
+		 * !! if numbers shall be included the expression in replaceAll, it
+		 * would be replaceAll("[^A-Za-z0-9 -]","") !!
+		 */
+		for (String term : text.toLowerCase().trim().replaceAll("[^A-Za-z -]", "").split("\\s+|-")) {
 
 			/* stemming term to a token */
 			stemmer.add(term.toCharArray(), term.length());
@@ -124,7 +159,7 @@ public class HTMLDocument extends DocumentImpl {
 			String token = stemmer.toString();
 
 			/* checking whether token is a stop word */
-			if (!HTMLDocument.stopwords.contains(token)) {
+			if (!HTMLDocument.stopwords.contains(token) && token.length() > 0) {
 
 				/*
 				 * getting position list, if token already exists or creating a
@@ -143,7 +178,6 @@ public class HTMLDocument extends DocumentImpl {
 				this.size++;
 			}
 		}
-
 	}
 
 	/**
@@ -166,7 +200,7 @@ public class HTMLDocument extends DocumentImpl {
 				try {
 					/* extracting link and adding it to set of links */
 					String url = linkElement.attr("abs:href").toString().replaceAll(" ", "");
-					if (url.length() > 0)
+					if (url.length() > 0 && !url.equals(this.url.toString()))
 						links.add(new URL(url));
 				} catch (MalformedURLException e) {
 					e.printStackTrace();

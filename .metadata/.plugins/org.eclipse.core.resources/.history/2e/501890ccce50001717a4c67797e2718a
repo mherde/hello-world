@@ -1,0 +1,130 @@
+package de.unikassel.ir.vsr;
+
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+public class PhraseSearchIndex extends InvertedIndexImpl implements PhraseSearch {
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(List<String> phrase) {
+
+		/* documents containing phrase */
+		Map<Document, List<Integer>> result = new HashMap<>();
+
+		/* ensuring phrase not to be null and phrase has at least one element */
+		if (phrase == null || phrase.isEmpty())
+			return answer;
+
+		/* array of pointers for terms in phrase */
+		// int[] pointers = new int[phrase.size()];
+		// Arrays.fill(pointers, 0);
+
+		Iterator<String> terms = phrase.iterator();
+		
+		int k = 1;
+		
+		String t = terms.next();
+		
+		TreeSet<Pair> answer = new TreeSet<>();
+		for (TokenOccurrence occ : tokenHash.get(t).getTokenOccurrenceList()) {
+			answer.add(new Pair(occ.getDocument(), occ.getPositions()));
+		}
+		
+		t = terms.next();
+		while (terms.hasNext() && answer != null) {
+			
+			TreeSet<Pair> nextDocs = new TreeSet<>();
+			for (TokenOccurrence occ : tokenHash.get(t).getTokenOccurrenceList()) {
+				nextDocs.add(new Pair(occ.getDocument(), occ.getPositions()));
+			}			
+			
+			answer = forwardPositionalIntersect(answer, nextDocs, k);
+			
+			k++;
+			
+			t = terms.next();
+		}
+
+		return result;
+	}
+
+	private TreeSet<Pair> forwardPositionalIntersect(TreeSet<Pair> p1,
+			TreeSet<Pair> p2, int k) {
+
+		TreeSet<Pair> answer = new TreeSet<>();
+
+
+		Iterator<Pair> p1Iterator = p1.iterator();
+		Iterator<Pair> p2Iterator = p2.iterator();
+
+		while (p1Iterator.hasNext() && p2Iterator.hasNext()) {
+			
+			Pair doc1 = p1Iterator.next();
+			Pair doc2 = p2Iterator.next();
+			
+			if (doc1.getDocument().getId().equals(doc2.getDocument().getId())) {
+
+				Iterator<Integer> pp1 = doc1.getPositions().iterator();
+				Iterator<Integer> pp2 = doc1.getPositions().iterator();
+
+				while (pp1.hasNext() && pp2.hasNext()) {
+					int pos1 = pp1.next();
+					int pos2 = pp2.next();
+					if (pos2 - pos1 == k) {
+						
+					}
+				}
+
+			}
+
+		}
+		return answer;
+	}
+
+	private class Pair implements Comparable<Pair> {
+
+		private Document doc;
+		private List<Integer> positions;
+
+		public Pair(Document doc, List<Integer> positions) {
+			this.doc = doc;
+			this.positions = positions;
+		}
+
+		public Document getDocument() {
+			return this.doc;
+		}
+
+		public List<Integer> getPositions() {
+			return this.positions;
+		}
+
+		@Override
+		public int compareTo(Pair o) {
+			return this.getDocument().getId().compareTo(o.getDocument().getId())
+		}
+
+	}
+
+	public PhraseSearchIndex(Corpus corpus) {
+		super(corpus);
+	}
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(String phrase) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getContext(String phrase, Document doc, int pos) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -1,0 +1,178 @@
+package de.unikassel.ir.vsr;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+public class PhraseSearchIndex extends InvertedIndexImpl implements PhraseSearch {
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(List<String> phrase) {
+
+		/* documents containing phrase */
+		Map<Document, List<Integer>> result = new HashMap<>();
+
+		/* ensuring phrase not to be null and phrase has at least one element */
+		if (phrase == null || phrase.isEmpty())
+			return result;
+
+		List<List<Pair>> lists = this.createSortedLists(phrase);
+
+		if (lists.isEmpty()) {
+			return result;
+		}
+
+		// for(TreeSet<Pair> list : lists){
+		// for(Pair pair : list)
+		// System.out.print(list);
+		// System.out.println();
+		// }
+		
+		int[] pointers = new int[phrase.size()];
+		Arrays.fill(pointers, 1);
+
+
+		while (!firstTerm.isEmpty()) {
+
+			boolean match = true;
+			
+			Pair pair_j_1 = firstTerm.pollFirst();
+			Pair pair_j = null;
+			
+
+			for (int j = 1; j < lists.size(); j++) {
+				
+				if(pair_j == null){
+					pair_j = lists.get(j).pollLast();
+				}
+				
+				String dk_j_1 = pair_j_1.getDocument().toString();
+				String dk_j = pair_j.getDocument().toString();
+				
+				int pk_j_1 = pair_j_1.getPosition();
+				int pk_j = pair_j.getPosition();
+				
+				while(!(dk_j.compareTo(dk_j_1) > 0 || (dk_j.equals(dk_j_1) && pk_j >= pk_j_1 +1 ))){
+					if(!lists.get(j).isEmpty()){
+						pair_j = lists.get(j).pollFirst();
+						pk_j = pair_j.getPosition();
+						dk_j = pair_j.getDocument().toString();
+					} else {
+						match = false;
+						break;
+					}
+				}
+				
+				System.out.println(pair_j_1);
+				System.out.println(pair_j+"\n");
+
+				if (!dk_j.equals(dk_j_1)
+						|| pk_j != pk_j+1) {
+					match = false;
+					break;
+				}
+				
+				pair_j_1 = pair_j;
+			}
+
+			if (match) {
+				List<Integer> positions = result.getOrDefault(pair_j.getDocument(), new ArrayList<Integer>());
+				positions.add(pair_j.getPosition());
+				result.put(pair_j.getDocument(), positions);
+			}
+		}
+
+		return result;
+
+	}
+
+	private List<List<Pair>> createSortedLists(List<String> phrase) {
+
+		List<List<Pair>> lists = new ArrayList<>();
+
+		for (String token : phrase) {
+
+			token = token.toLowerCase();
+
+			if (tokenHash.get(token) == null) {
+				lists = new ArrayList<>();
+				break;
+			}
+
+			List<Pair> sortedList = new ArrayList<>();
+
+			for (TokenOccurrence occ : tokenHash.get(token).getTokenOccurrenceList()) {
+				for (int position : occ.getPositions()) {
+					sortedList.add(new Pair(occ.getDocument(), position));
+				}
+			}
+			
+			Collections.sort(sortedList);
+
+			lists.add(sortedList);
+		}
+		
+		return lists;
+
+	}
+
+	private class Pair implements Comparable<Pair> {
+
+		private Document doc;
+		private int position;
+
+		public Pair(Document doc, int position) {
+			this.doc = doc;
+			this.position = position;
+		}
+
+		public Document getDocument() {
+			return this.doc;
+		}
+
+		public int getPosition() {
+			return this.position;
+		}
+
+		@Override
+		public int compareTo(Pair o) {
+			int comp = this.getDocument().getId().compareTo(o.getDocument().getId());
+			if (comp != 0) {
+				return comp;
+			} else {
+				return this.getPosition() > o.getPosition() ? +1 : this.getPosition() < o.getPosition() ? -1 : 0;
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "(" + this.getDocument().getId() + ", " + this.getPosition() + ")";
+		}
+
+	}
+
+	public PhraseSearchIndex(Corpus corpus) {
+		super(corpus);
+	}
+
+	@Override
+	public Map<Document, List<Integer>> searchPhrase(String phrase) {
+
+		String[] terms = phrase.trim().split("\\s+");
+
+		return this.searchPhrase(Arrays.asList(terms));
+
+	}
+
+	@Override
+	public List<String> getContext(String phrase, Document doc, int pos) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

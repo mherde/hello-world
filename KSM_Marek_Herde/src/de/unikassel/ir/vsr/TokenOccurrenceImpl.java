@@ -1,6 +1,5 @@
 package de.unikassel.ir.vsr;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TokenOccurrenceImpl implements TokenOccurrence {
@@ -18,12 +17,6 @@ public class TokenOccurrenceImpl implements TokenOccurrence {
 	private List<Integer> positions;
 
 	/**
-	 * flag, because positions counting is different in this class from the
-	 * document class
-	 */
-	private boolean positionFlag = true;
-
-	/**
 	 * constructor to initialize all important values
 	 * 
 	 * @param docRef
@@ -36,8 +29,7 @@ public class TokenOccurrenceImpl implements TokenOccurrence {
 		this.documentTF = ((DocumentImpl) this.docRef).getTF(token);
 
 		/* counting positions ascending from 0 instead of from 1 */
-		this.positions = new ArrayList<Integer>();
-		this.positions.addAll(this.docRef.getTermPositions(token));
+		this.positions = this.docRef.getTermPositions(token);
 
 	}
 
@@ -72,14 +64,6 @@ public class TokenOccurrenceImpl implements TokenOccurrence {
 
 	@Override
 	public List<Integer> getPositions() {
-		if (this.positionFlag) {
-			/* counting from 0 instead from 1 like in document class */
-			for (int i = 0; i < this.positions.size(); i++) {
-				this.positions.add(i, this.positions.get(i) - 1);
-			}
-			this.positionFlag = false;
-		}
-
 		return this.positions;
 	}
 
