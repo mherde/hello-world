@@ -1,0 +1,16 @@
+package de.unikassel.ir.spider;
+
+public class HTTPWorker {
+
+	public String id;
+
+	public HTTPWorker(Crawler crawler, String string) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public void start() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

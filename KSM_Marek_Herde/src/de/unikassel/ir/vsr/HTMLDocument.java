@@ -114,12 +114,17 @@ public class HTMLDocument extends DocumentImpl {
 		/* parsing HTML document with JSoup parser */
 		this.parsedHTMLdoc = Jsoup.parse(input, "UTF-8", this.url.toString());
 		parsedHTMLdoc.setBaseUri(this.url.toString());
+		
 
 		/* removing java script and things not displayed on website */
 		parsedHTMLdoc.select("script,.hidden,style,span").remove();
+		
+		System.out.println(parsedHTMLdoc);
 
 		/* initialization of the map containing all terms and its positions */
 		this.termsIndex = new HashMap<>();
+		this.allTerms = new ArrayList<>();
+
 
 		/* all elements of the parsed HTML document */
 		Elements elements = parsedHTMLdoc.getAllElements();
@@ -172,6 +177,7 @@ public class HTMLDocument extends DocumentImpl {
 
 				/* adding token to data structure representing this document */
 				this.termsIndex.put(token, positionsOfToken);
+				this.allTerms.add(token);
 
 				/* increasing size and currentPosition by one */
 				currentPosition++;
@@ -209,6 +215,11 @@ public class HTMLDocument extends DocumentImpl {
 		}
 
 		return this.links;
+	}
+
+	public URL getURL() {
+		// TODO Auto-generated method stub
+		return this.url;
 	}
 
 }

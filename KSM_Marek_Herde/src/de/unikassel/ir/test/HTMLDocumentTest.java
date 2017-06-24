@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.unikassel.ir.vsr.HTMLDocument;
-
 import junit.framework.TestCase;
 
 /**

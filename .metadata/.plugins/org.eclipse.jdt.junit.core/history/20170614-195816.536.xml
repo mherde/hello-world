@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="PhraseSearchIndexTest" project="KSM_Marek_Herde" tests="4" started="4" failures="0" errors="0" ignored="0">
-  <testsuite name="de.unikassel.ir.test.PhraseSearchIndexTest" time="0.704">
-    <testcase name="testIndexEmpty" classname="de.unikassel.ir.test.PhraseSearchIndexTest" time="0.259"/>
-    <testcase name="testContextNewZealand" classname="de.unikassel.ir.test.PhraseSearchIndexTest" time="0.152"/>
-    <testcase name="testIndexCommittee" classname="de.unikassel.ir.test.PhraseSearchIndexTest" time="0.181"/>
-    <testcase name="testIndexNewZealand" classname="de.unikassel.ir.test.PhraseSearchIndexTest" time="0.112"/>
-  </testsuite>
-</testrun>

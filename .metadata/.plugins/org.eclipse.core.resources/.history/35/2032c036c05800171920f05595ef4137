@@ -1,0 +1,13 @@
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+
+public class SameHostURLFilter implements URLFilter {
+
+	@Override
+	public boolean accept(URL url) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

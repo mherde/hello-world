@@ -13,11 +13,12 @@ import de.unikassel.ir.vsr.CorpusImpl;
 import de.unikassel.ir.vsr.Document;
 import de.unikassel.ir.vsr.DocumentImpl;
 import de.unikassel.ir.vsr.PhraseSearchIndex;
+
 import junit.framework.TestCase;
 
 /**
- * Testcase for indices implementing the PhraseSearch interface. Uses the corpus
- * in resources/texte.
+ * Testcase for indices implementing the PhraseSearch interface.
+ * Uses the corpus in resources/texte.
  * 
  * @author Jens Illig
  */
@@ -35,7 +36,7 @@ public class PhraseSearchIndexTest extends TestCase {
 		File dir = new File("resources/texte");
 		for (File file : dir.listFiles()) {
 			try {
-				if (!file.isDirectory()) {
+				if (!file.isDirectory()) { 
 					FileInputStream stream = new FileInputStream(file);
 					Document doc = new DocumentImpl(file.getName());
 					doc.read(stream);
@@ -47,26 +48,22 @@ public class PhraseSearchIndexTest extends TestCase {
 			}
 		}
 		index = new PhraseSearchIndex(corpus);
-		String phrase = "june july and august reuter";
-		Map<Document, List<Integer>> result = index.searchPhrase(phrase);
-		Document doc = result.keySet().iterator().next();
-		System.out.println(index.getContext(phrase, doc, result.get(doc).get(0)));
 	}
 
 	/**
-	 * Test whether a phrase that does not exist in any Document returns an
-	 * empty result
+	 * Test whether a phrase that does not exist in any Document
+	 * returns an empty result
 	 */
 	public void testIndexEmpty() {
 		// Search for some phrase that does not exist in any Document
 		String phrase = "wer das findet liegt falsch";
 		Map<Document, List<Integer>> result = index.searchPhrase(phrase);
-
+		
 		// make expected result (empty Map)
 		Map<String, int[]> expected = new HashMap<String, int[]>();
 		checkResult(result, expected);
 	}
-
+	
 	/**
 	 * Test: Phrase 1
 	 */
@@ -74,7 +71,7 @@ public class PhraseSearchIndexTest extends TestCase {
 		// Search for "New Zealand"
 		String phrase = "new zealand";
 		Map<Document, List<Integer>> result = index.searchPhrase(phrase);
-
+		
 		// make Expected result
 		Map<String, int[]> expected = new HashMap<String, int[]>();
 		expected.put("Reut_4739.txt", new int[] { 3, 23, 84 });
@@ -82,11 +79,10 @@ public class PhraseSearchIndexTest extends TestCase {
 		expected.put("Reut_9604.txt", new int[] { 4, 13 });
 		expected.put("Reut_8214.txt", new int[] { 9 });
 		
-		
-
 		checkResult(result, expected);
 	}
-
+	
+	
 	/**
 	 * Test: Phrase 2
 	 */
@@ -94,19 +90,17 @@ public class PhraseSearchIndexTest extends TestCase {
 		// Search for "executive committee"
 		String phrase = "executive committee";
 		Map<Document, List<Integer>> result = index.searchPhrase(phrase);
-
+		
 		// make Expected result
 		Map<String, int[]> expected = new HashMap<String, int[]>();
 		expected.put("Reut_10122.txt", new int[] { 245 });
 		expected.put("Reut_10760.txt", new int[] { 712 });
 		expected.put("Reut_7311.txt", new int[] { 28, 90 });
-		expected.put("Reut_7512.txt", new int[] { 296 });
-
-		
-
+		expected.put("Reut_7512.txt", new int[] {296 });
+	
 		checkResult(result, expected);
 	}
-
+	
 	/**
 	 * Test: Context before and after search phrase (5 words each)
 	 */
@@ -121,28 +115,27 @@ public class PhraseSearchIndexTest extends TestCase {
 		expected.put("Reut_9604.txt", Arrays.asList("normal work resumes at", "ports 13 normal work has"));
 		expected.put("Reut_5734.txt", Arrays.asList("support of pay claims closed", "s 15 ports for 24"));
 		expected.put("Reut_8214.txt", Arrays.asList("but further disruption likely 13", "ports reopened at 0730 hrs"));
-
+		
 		// check for each found result its context
-		for (Document doc : result.keySet()) {
+		for (Document doc: result.keySet()) {			
 			List<String> resultContext = index.getContext(phrase, doc, result.get(doc).get(0));
-			System.out.println(resultContext);
 			// check beforePart and afterPart
-			for (String context : resultContext) {
+			for (String context: resultContext){
 				assertTrue(expected.get(doc.getId()).contains(context));
 			}
 		}
 	}
+	
+	
 
 	/**
-	 * Compare found result with expected result (can differ => check element by
-	 * element)
+	 * Compare found result with expected result (can differ => check element by element)
 	 * 
-	 * @param result
-	 *            = found result
-	 * @param expected
-	 *            = expected result
+	 * @param result = found result
+	 * @param expected = expected result
 	 */
-	public void checkResult(Map<Document, List<Integer>> result, Map<String, int[]> expected) {
+	public void checkResult(Map<Document, List<Integer>> result,
+			Map<String, int[]> expected) {
 		// correct number of Documents retrieved?
 		assertEquals(expected.size(), result.size());
 

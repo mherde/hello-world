@@ -99,7 +99,7 @@ public class BooleanTest extends TestCase {
 			ArrayList<Integer> tmpList = new ArrayList<Integer>();
 			System.out.println(tmpString);
 			for (String s: tmpString.split(", "))
-				tmpList.add(Integer.parseInt(s));
+				tmpList.add(Integer.parseInt(s)-1);
 			expectedResult.add(tmpList);
 		}
 

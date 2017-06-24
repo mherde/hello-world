@@ -1,0 +1,22 @@
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+
+public class HTTPFilter implements URLFilter {
+
+	@Override
+	public boolean accept(URL url) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean shouldInclude(URL from, URL to) {
+		boolean fromPage = from.getProtocol().equals("https") || from.getProtocol().equals("http");
+		boolean toPage = to.getProtocol().equals("https") || from.getProtocol().equals("http");
+		if(from.getProtocol().equals("https") || from.get)
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}
