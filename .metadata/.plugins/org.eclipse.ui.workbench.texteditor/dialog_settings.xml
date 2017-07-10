@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item value="404" key="DIALOG_X_ORIGIN"/>
+		<item value="289" key="DIALOG_Y_ORIGIN"/>
+	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="13" key="selection"/>
+		<item value="http://univideo.uni-kassel.de" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="49801 [main] DEBUG de.unikassel.ir.spider.CrawlerMain  - Doc: http://www.uni-kassel.de/ukt/unsere-angebote.html"/>
+			<item value="49801 [main] DEBUG de.unikassel.ir.spider.CrawlerMain  - Doc: http://www.uni-kassel.de/forschung/einrichtungen/hochschulverwaltung.html"/>
+			<item value="http://univideo.uni-kassel.de"/>
+			<item value="http://www.uni-kassel.de/universitaet/pressekommunikation/neues-vom-campus/meldung/article/vortrag-aspekte-der-gartenkultur-und-freiraumentwicklung-in-china-beispiele-aus-yunnan.html"/>
+			<item value="http://www.uni-kassel.de/schnelleinstieg/moodle.html"/>
+			<item value="https://flinc.org/groups/1116-universitaet-kassel"/>
 			<item value="13"/>
 			<item value="february"/>
-			<item value="0.0"/>
 		</list>
 		<list key="replacehistory">
 		</list>

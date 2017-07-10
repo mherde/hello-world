@@ -4,27 +4,30 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import de.unikassel.ir.spider.Crawler;
 import de.unikassel.ir.vsr.Corpus;
 import de.unikassel.ir.vsr.CorpusImpl;
-//import de.unikassel.ir.vsr.CorpusImpl;
 import de.unikassel.ir.vsr.Document;
-//import de.unikassel.ir.vsr.DocumentImpl;
 import de.unikassel.ir.vsr.DocumentImpl;
-import de.unikassel.ir.vsr.InvertedIndex;
-import de.unikassel.ir.vsr.InvertedIndexImpl;
+import de.unikassel.ir.vsr.PhraseSearchIndex;
 import de.unikassel.ir.vsr.SearchResultItem;
 
 /**
  * Search Engine Bean to use the query methods in JSPs
+ * 
  * @author Beate Krause
  */
 public class SearchEngine {
-	
+
 	/**
 	 * The corpus
 	 */
@@ -32,23 +35,54 @@ public class SearchEngine {
 	/**
 	 * inverted index
 	 */
-	private InvertedIndex index;
+	private static PhraseSearchIndex index = initIndex();
+	private static Corpus webIndex;
+
+	private static PhraseSearchIndex initIndex() {
+		if (index == null) {
+			try {
+
+				// Create a Crawler, Start it and give it a URL to start with
+				Crawler spider = new Crawler(50, 10, 20);
+
+				URL url = new URL("https://www.w3schools.com/html/");
+
+				spider.addURL(null, url);
+
+				// Wait until all the nPages have been downloaded and processed
+				spider.waitUntilDone();
+
+				// Return corpus.
+				webIndex = spider.getDocumentsAsCorpus();
+				return new PhraseSearchIndex(webIndex);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				System.err.println("ERROR: COULD NOT LOAD CORPUS.");
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
 
 	/**
 	 * Constructor, sets the corpus
 	 */
 	public SearchEngine() {
-		corpus = new CorpusImpl();
-		loadDefaultCorpus();
-		index = new InvertedIndexImpl(corpus);
+		if (index != null) {
+			this.corpus = webIndex;
+		} else {
+			this.corpus = new CorpusImpl();
+			loadDefaultCorpus();
+		}
 	}
-	
+
 	/**
 	 * Load Texts into the corpus
 	 */
 	public void loadDefaultCorpus() {
-		
-		//TODO: set path for corpus
+
+		// TODO: set path for corpus
 		File dir = new File(MyServlet.corpusPath);
 
 		for (File file : dir.listFiles()) {
@@ -68,61 +102,145 @@ public class SearchEngine {
 			}
 		}
 	}
-	
+
 	/**
 	 * Query for terms in the corpus
-	 * @param terms query
-	 * @param andOperator AND or OR query
+	 * 
+	 * @param terms
+	 *            query
+	 * @param andOperator
+	 *            AND or OR query
 	 * @return set of document ids
 	 */
-	public List<String> testQuery(String terms, boolean andOperator) {
-		
-		String[] termsRequest = terms.split("\\s+");
-		
-		
-		List<String> resultIDs = new ArrayList<String>();
-		Collection<Document> docs;
-		
-		if (andOperator){
-			docs = corpus.getDocumentsContainingAll(termsRequest);
-		}else{
-			docs = corpus.getDocumentsContainingAny(termsRequest);
-		}
-		
-		for (Document doc : docs) {
-			resultIDs.add(doc.getId());
-		}
-		
-		return resultIDs;
-	}
-	
-	/**
-	 * calculates list of documents ranked regarding the cosines similarity w.r.t. query
-	 * @param terms
-	 * @return ranked list of documents
-	 */
-	public List<String> testRankedQuery(String terms){
-		/* splitting query into terms */
-		String[] query = terms.split("\\s+");
-		
-		/* stores result list of documents */
-		List<String> results = new ArrayList<String>();
+	public List<SearchEntry> testQuery(String terms, boolean andOperator) {
 
-		/* iterator over all found documents ordered by their cosines similarity */
-		Iterator<? extends SearchResultItem> searchResults = index.getCosineSimilarities(query);
-		
-		/* adding found docuements to result list */
-		int i = 1;
-		while(searchResults.hasNext()){
-			SearchResultItem item = searchResults.next();
-			results.add(i+". "+item.toString());
-			i++;
+		String[] termsRequest = terms.toLowerCase().trim().replaceAll("[^A-Za-zäöüß -]", "").split("\\s+|-");
+
+		List<SearchEntry> results = new ArrayList<SearchEntry>();
+		Collection<Document> docs;
+
+		if (termsRequest.length > 0) {
+			if (andOperator) {
+				docs = corpus.getDocumentsContainingAll(termsRequest);
+			} else {
+				docs = corpus.getDocumentsContainingAny(termsRequest);
+			}
+
+			for (Document doc : docs) {
+				List<String> contexts = new ArrayList<>();
+				for (String term : termsRequest) {
+					List<Integer> positions = doc.getTermPositions(term);
+					if (positions != null)
+						for (int pos : positions) {
+							List<String> contextList = index.getContext(term, doc, pos);
+							String context = contextList.get(0) + " <b>" + term + "</b> " + contextList.get(1);
+							contexts.add(context);
+						}
+				}
+				results.add(new SearchEntry(doc.getId(), contexts));
+			}
+
 		}
-		
 		return results;
 
 	}
-	
+
+	/**
+	 * calculates list of documents ranked regarding the cosines similarity
+	 * w.r.t. query
+	 * 
+	 * @param terms
+	 * @return ranked list of documents
+	 */
+	public List<SearchEntry> testRankedQuery(String terms) {
+		/* splitting query into terms */
+		String[] query = terms.toLowerCase().trim().replaceAll("[^A-Za-zäöüß -]", "").split("\\s+|-");
+
+		/* stores result list of documents */
+		List<SearchEntry> results = new ArrayList<>();
+
+		if (query.length > 0) {
+			/*
+			 * iterator over all found documents ordered by their cosines
+			 * similarity
+			 */
+			Iterator<? extends SearchResultItem> searchResults = index.getCosineSimilarities(query);
+
+			/* adding found docuements to result list */
+			while (searchResults.hasNext()) {
+				List<String> contexts = new ArrayList<>();
+				SearchResultItem item = searchResults.next();
+				for (String term : query) {
+					List<Integer> positions = item.getDocument().getTermPositions(term);
+					if (positions != null)
+						for (int pos : positions) {
+							List<String> contextList = index.getContext(term, item.getDocument(), pos);
+							String context = contextList.get(0) + " <b>" + term + "</b> " + contextList.get(1);
+							contexts.add(context);
+						}
+				}
+				results.add(new SearchEntry(item.getDocument().getId(), contexts));
+			}
+
+		}
+
+		return results;
+	}
+
+	public List<SearchEntry> testPhraseQuery(String phrase) {
+		/* splitting query into terms */
+
+		/* stores result list of documents */
+		List<SearchEntry> results = new ArrayList<>();
+
+		/*
+		 * mapping of all found documents and the positions of the phrase
+		 */
+		Map<Document, List<Integer>> searchResults = index.searchPhrase(phrase);
+
+		/* adding found docuements to result list */
+		for (Entry<Document, List<Integer>> entry : searchResults.entrySet()) {
+			List<String> contexts = new ArrayList<String>();
+			for (int pos : entry.getValue()) {
+				List<String> contextList = index.getContext(phrase, entry.getKey(), pos);
+				String context = contextList.get(0) + " <b>" + phrase + "</b> " + contextList.get(1);
+				contexts.add(context);
+			}
+
+			results.add(new SearchEntry(entry.getKey().getId(), contexts));
+		}
+
+		return results;
+
+	}
+
+	public class SearchEntry {
+
+		private String url;
+		private List<String> contexts;
+
+		public SearchEntry(String url, List<String> contexts) {
+			this.setUrl(url);
+			this.setContexts(contexts);
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+		public List<String> getContexts() {
+			return contexts;
+		}
+
+		public void setContexts(List<String> contexts) {
+			this.contexts = contexts;
+		}
+	}
+
 	/**
 	 * @return the Corpus
 	 */

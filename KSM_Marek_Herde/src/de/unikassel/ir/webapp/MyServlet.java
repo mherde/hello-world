@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.unikassel.ir.webapp.SearchEngine.SearchEntry;
+
 /**
  * Servlet implementation class MyServlet
  */
@@ -16,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 public class MyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static String corpusPath;
+	public static String stopWordsPath;
+	public static String jspPath;
+	private SearchEngine searchEngine;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -27,6 +32,9 @@ public class MyServlet extends HttpServlet {
 	@Override
 	public void init() {
 		corpusPath = this.getServletContext().getRealPath("resources/texte");
+		stopWordsPath = this.getServletContext().getRealPath("resources/englishST.txt");
+		jspPath = this.getServletContext().getRealPath("index.jsp");
+		this.searchEngine = new SearchEngine();
 	}
 
 	/**
@@ -35,38 +43,57 @@ public class MyServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		/* getting content from the search field */
-		String searchterm = request.getParameter("searchfield");
-		
-		/* determining the used boolean operator */
-		String operator = request.getParameter("operator");
-		
-		/* printing some information */
-		response.getWriter().append("Moogle found the following documents w.r.t. your query:\n");
-		
-		/* creation of new search engine to search for documents */
-		SearchEngine searcher = new SearchEngine();
-		
-		/* stores the corresponding documents */
-		List<String> result = null;
-		
-		/* checking which booleanOperator is used */
-		if (operator.equals("OR")) {
-			/* OR operator */
-			result = searcher.testQuery(searchterm, false);
-		} else if(operator.equals("AND")) {
-			/* AND operator */
-			result = searcher.testQuery(searchterm, true);
-		} else {
-			/* RANKED operator */
-			result = searcher.testRankedQuery(searchterm);
+
+		response.setContentType("text/html");
+
+		String search = request.getParameter("search");
+
+		if (search != null) {
+
+			/* getting content from the search field */
+			String searchterm = request.getParameter("searchfield");
+
+			/* determining the used boolean operator */
+			String operator = request.getParameter("operator");
+
+			StringBuffer sites = new StringBuffer();
+
+			/* printing some information */
+			sites.append("Moogle found the following documents w.r.t. your query:");
+			sites.append("<br/><br/>");
+
+			/* stores the corresponding documents */
+			List<SearchEntry> result = null;
+
+			/* checking which booleanOperator is used */
+			if (operator.equals("OR")) {
+				/* OR operator */
+				result = this.searchEngine.testQuery(searchterm, false);
+			} else if (operator.equals("AND")) {
+				/* AND operator */
+				result = this.searchEngine.testQuery(searchterm, true);
+			} else if (operator.equals("RANK")) {
+				/* RANKED operator */
+				result = this.searchEngine.testRankedQuery(searchterm);
+			} else if (operator.equals("PHRASE")) {
+				/* PHRASE operator */
+				result = this.searchEngine.testPhraseQuery(searchterm);
+			}
+
+			if (result != null)
+				for (SearchEntry entry : result) {
+					sites.append("<a href=" + entry.getUrl() + ">" + entry.getUrl() + "</a><br/>");
+					for (String context : entry.getContexts()) {
+						sites.append(context);
+						sites.append("<br/>");
+					}
+					sites.append("<br/>");
+				}
+
+			request.setAttribute("sites", sites);
+			request.getRequestDispatcher("index.jsp").forward(request, response);
 		}
-		
-		/* printing all documents */
-		for (String s : result) {
-			response.getWriter().println(s);
-		}
+
 	}
 
 	/**
@@ -77,6 +104,5 @@ public class MyServlet extends HttpServlet {
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
-
 
 }

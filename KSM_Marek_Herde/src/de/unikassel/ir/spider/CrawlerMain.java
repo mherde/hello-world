@@ -18,33 +18,33 @@ import de.unikassel.ir.vsr.Document;
  */
 public class CrawlerMain {
 	static org.apache.log4j.Logger log = Logger.getLogger(CrawlerMain.class);
-	
+
 	public static void main(String[] args) {
-		BasicConfigurator.configure();		
+		BasicConfigurator.configure();
 		try {
 			// Number of pages to download
-			int nPages = 5;
-			// Number of threads to extract the links 
-			int nLinkExtractors = 5;			
+			int nPages = 20;
+			// Number of threads to extract the links
+			int nLinkExtractors = 5;
 			// number of HTTP-Queues
 			int nWorkers = 10;
-			
+
 			// Create a Crawler, Start it and give it a URL to start with
 			log.debug("Start...");
 			Crawler spider = new Crawler(nPages, nLinkExtractors, nWorkers);
 			URL url = new URL("http://www.uni-kassel.de");
 			log.debug("Spider initialized\n----------------------------------------------");
 			log.debug("Pushing " + url);
-			spider.addURL(null, url);			
-			
+			spider.addURL(null, url);
+
 			// Wait until all the nPages have been downloaded and processed
-			spider.waitUntilDone();					
-			
+			spider.waitUntilDone();
+
 			// Show Result (Corpus)
-			Corpus corpus = spider.getDocumentsAsCorpus();			
-			for (Document doc: corpus) {
+			Corpus corpus = spider.getDocumentsAsCorpus();
+			for (Document doc : corpus) {
 				log.debug("Doc: " + doc.getId());
-			}			
+			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

@@ -16,6 +16,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.unikassel.ir.webapp.MyServlet;
+
 public class HTMLDocument extends DocumentImpl {
 
 	/**
@@ -55,7 +57,7 @@ public class HTMLDocument extends DocumentImpl {
 		try {
 
 			/* scanner to read file of stop words */
-			Scanner sc = new Scanner(new File("resources/englishST.txt"), "UTF-8");
+			Scanner sc = new Scanner(new File(MyServlet.stopWordsPath), "UTF-8");
 			while (sc.hasNext()) {
 
 				/*
@@ -94,6 +96,14 @@ public class HTMLDocument extends DocumentImpl {
 	 */
 	public HTMLDocument(URL url) {
 		this.url = url;
+		String urlString = this.url.toString();
+		if (urlString.endsWith("/")) {
+			urlString = urlString.substring(0, urlString.length() - 1);
+			try {
+				this.url = new URL(urlString);
+			} catch (MalformedURLException e) {
+			}
+		}
 	}
 
 	@Override
@@ -111,20 +121,33 @@ public class HTMLDocument extends DocumentImpl {
 		 */
 		this.links = null;
 
+		String html = "";
+
+		Scanner sc = new Scanner(input);
+
+		while (sc.hasNext()) {
+			html += sc.next() + " ";
+		}
+
+		sc.close();
+		html.trim();
+
 		/* parsing HTML document with JSoup parser */
-		this.parsedHTMLdoc = Jsoup.parse(input, "UTF-8", this.url.toString());
+		try {
+			this.parsedHTMLdoc = Jsoup.parse(html, this.url.toString());
+		} catch (IllegalArgumentException e) {
+			this.parsedHTMLdoc = null;
+			System.err.println("ERROR: URL " + this.url + " could not be parsed.");
+			return;
+		}
 		parsedHTMLdoc.setBaseUri(this.url.toString());
-		
 
 		/* removing java script and things not displayed on website */
 		parsedHTMLdoc.select("script,.hidden,style,span").remove();
-		
-		System.out.println(parsedHTMLdoc);
 
 		/* initialization of the map containing all terms and its positions */
 		this.termsIndex = new HashMap<>();
 		this.allTerms = new ArrayList<>();
-
 
 		/* all elements of the parsed HTML document */
 		Elements elements = parsedHTMLdoc.getAllElements();
@@ -156,15 +179,13 @@ public class HTMLDocument extends DocumentImpl {
 		 * !! if numbers shall be included the expression in replaceAll, it
 		 * would be replaceAll("[^A-Za-z0-9 -]","") !!
 		 */
-		for (String term : text.toLowerCase().trim().replaceAll("[^A-Za-z -]", "").split("\\s+|-")) {
+		for (String term : text.toLowerCase().trim().replaceAll("[^A-Za-zäöüß0-9 -]", "").split("\\s+|-")) {
 
 			/* stemming term to a token */
-			stemmer.add(term.toCharArray(), term.length());
-			stemmer.stem();
-			String token = stemmer.toString();
+			String token = term;
 
 			/* checking whether token is a stop word */
-			if (!HTMLDocument.stopwords.contains(token) && token.length() > 0) {
+			if (token.length() > 0) {
 
 				/*
 				 * getting position list, if token already exists or creating a
@@ -194,7 +215,7 @@ public class HTMLDocument extends DocumentImpl {
 	public Set<URL> getExtractedLinks() {
 
 		/* if links have not been calculated yet */
-		if (links == null) {
+		if (links == null && this.parsedHTMLdoc != null) {
 			/* stores links */
 			links = new HashSet<>();
 
@@ -206,6 +227,9 @@ public class HTMLDocument extends DocumentImpl {
 				try {
 					/* extracting link and adding it to set of links */
 					String url = linkElement.attr("abs:href").toString().replaceAll(" ", "");
+					if (url.endsWith("/")) {
+						url = url.substring(0, url.length() - 1);
+					}
 					if (url.length() > 0 && !url.equals(this.url.toString()))
 						links.add(new URL(url));
 				} catch (MalformedURLException e) {
@@ -218,8 +242,16 @@ public class HTMLDocument extends DocumentImpl {
 	}
 
 	public URL getURL() {
-		// TODO Auto-generated method stub
 		return this.url;
+	}
+
+	@Override
+	public String getId() {
+		return this.url.toString();
+	}
+
+	public org.jsoup.nodes.Document getParsedHTMLdoc() {
+		return this.parsedHTMLdoc;
 	}
 
 }

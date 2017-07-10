@@ -1,0 +1,263 @@
+/*
+ * Created on 11.01.2006
+ */
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.log4j.Logger;
+
+import de.unikassel.ir.vsr.Corpus;
+import de.unikassel.ir.vsr.HTMLDocument;
+
+/**
+ * Central Class for the Crawler. With HTTPWorkers the Documents are produced
+ * from crawled URLs and with LinkExtractors the Document's Links are extracted
+ * and added to the URLs to crawl.
+ * 
+ * @author Christoph Schmitz
+ * 
+ */
+public class Crawler {
+
+	// to use log4j add the log4j jar archive to your java build path
+	private static Logger log = Logger.getLogger(Crawler.class);
+
+	/**
+	 * Enum for the state of the Crawler
+	 */
+	protected static enum State {
+		running, // crawler is active and limit of pages was not reached so far
+		stopping, // crawler is still crawling but limit of pages has been
+					// reached
+		stopped // crawler was stopped, no more crawling, extracting...
+	};
+
+	/**
+	 * The current state of the Crawler
+	 */
+	volatile State state; // can be accessed by more than one thread (in
+							// unsynchronized methods) => atomic
+
+	/**
+	 * URLs, that have been found and are to be processed
+	 */
+	private Set<URL> foundURLs;
+	/**
+	 * Docs that were crawled but the links have not been extracted
+	 */
+	private BlockingQueue<HTMLDocument> docsToBeExtracted;
+	/**
+	 * Docs, that have been processed completely (links and content extracted)
+	 */
+	private Map<URL, HTMLDocument> completedDocs;
+
+	private int nPages;
+	// the LinkExtractors
+	private int nLinkExtractors;
+	private List<LinkExtractor> linkExtractors;
+	// the HTTPWorkers
+	private int nWorkers;
+	private List<HTTPWorker> workers;
+
+	private URLFilter urlFilter;
+
+	/**
+	 * Construct a Crawler
+	 * 
+	 * @param nPages
+	 *            = Number of pages to crawl
+	 * @param nLinkExtractors
+	 *            = number of active LinkExtractors
+	 * @param nWorkers
+	 *            = number of active HTTPWorkers
+	 */
+	public Crawler(int nPages, int nLinkExtractors, int nWorkers) {
+		this.nLinkExtractors = nLinkExtractors;
+		this.nWorkers = nWorkers;
+		this.nPages = nPages;
+
+		// init lists and filter
+		this.completedDocs = new HashMap<URL, HTMLDocument>();
+		this.docsToBeExtracted = new LinkedBlockingQueue<HTMLDocument>();
+		this.foundURLs = new HashSet<URL>();
+		this.urlFilter = new AndURLFilter(new HTTPFilter(), new SameHostURLFilter());
+
+		// create and start Threads (HTTPWorkers and LinkExtractors)
+		this.state = State.running;
+		this.linkExtractors = new LinkedList<LinkExtractor>();
+		for (int i = 0; i < this.nLinkExtractors; i++) {
+			LinkExtractor lex = new LinkExtractor(this, "LEX " + i);
+			log.debug("LinkExtractor " + lex.id + " created.");
+			this.linkExtractors.add(lex);
+			lex.start();
+			log.debug("LinkExtractor " + lex.id + " started.");
+		}
+		this.workers = new ArrayList<HTTPWorker>();
+		for (int i = 0; i < nWorkers; i++) {
+			HTTPWorker httpWorker = new HTTPWorker(this, "Worker " + i);
+			log.debug("HTTPWorker " + httpWorker.id + " created.");
+			this.workers.add(i, httpWorker);
+			httpWorker.start();
+			log.debug("HTTPWorker " + httpWorker.id + " started.");
+		}
+	}
+
+	/**
+	 * Add a URL to the Queue of (exactly) one of the HTTP-Workers
+	 * 
+	 * @param from
+	 *            = where was the Link found (null if URL is a new seed for the
+	 *            crawler)
+	 * @param to
+	 *            = the URL to crawl
+	 */
+	public synchronized void addURL(URL from, URL to) {
+		// check URL-Filter
+		if (this.urlFilter.shouldInclude(from, to)) {
+			// URL-Seen-Test
+			if (!this.completedDocs.containsKey(to) && !this.foundURLs.contains(to)) {
+				// new URL was neither completed(=links and words extracted)
+				// nor is it currently waiting to be processed
+				HTTPWorker queue = this.getQueueForHost(to.getHost());
+				queue.push(to);
+				// URL will be processed by the chosen HTTPWorker
+				// => add to foundURLs
+				foundURLs.add(to);
+				log.debug("addURL: added: " + to);
+			} else {
+				// new URL was either already or is currently been processed
+				this.markDone(new HTMLDocument(to));
+				log.debug("addURL: This URL was already queued: " + to);
+			}
+		} else {
+			// URL was filtered out
+			log.debug("addURL: filtered out: " + to);
+		}
+	}
+
+	/**
+	 * Mark the page as downloaded but links have not been extracted Might wake
+	 * threads waiting for getDocToBeExtracted
+	 * 
+	 * @param doc
+	 */
+	public void addCrawledPage(HTMLDocument doc) {
+		synchronized (completedDocs) {
+			if (completedDocs.size() < nPages) {
+				// we still have capacity for this doc => add
+				try {
+					docsToBeExtracted.put(doc);
+				} catch (InterruptedException e) {
+					log.error(e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Marks a Document as processed, i.e. content and links extracted
+	 * 
+	 * @param doc
+	 */
+	public synchronized void markDone(HTMLDocument doc) {
+		// accept Documents only if still running
+		if (this.state == State.running) {
+			foundURLs.remove(doc.getURL());
+			if (doc.getParsedHTMLdoc() != null) {
+				completedDocs.put(doc.getURL(), doc);
+				log.debug(this.completedDocs.size() + ". URL markDone: " + doc.getURL());
+			}
+
+			/* Checking whether there are URL that can be extracted */
+			if (completedDocs.size() >= nPages
+					|| (docsToBeExtracted.isEmpty() && !runningWorker && !runningExtractor)) {
+				// We have processed enough Documents => stopping
+				this.state = State.stopping;
+				// wake waitUntilDone to end all active threads
+				notifyAll();
+			}
+		}
+	}
+
+	/**
+	 * Gets the first page from the List of Documents whose links were not yet
+	 * extracted Waits if no Document is in the List
+	 * 
+	 * @return HTMLDocument (Seite)
+	 * @throws InterruptedException
+	 */
+	public HTMLDocument getDocToBeExtracted() throws InterruptedException {
+		return docsToBeExtracted.take();
+	}
+
+	/**
+	 * Waits until enough Documents have been downloaded and processes and
+	 * afterwards stopps all Threads
+	 */
+	public void waitUntilDone() {
+		while (this.state != State.stopping) {
+			// Crawler is still running => wait
+			synchronized (this) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		log.warn("######### Crawl ends #########");
+
+		// Stop HTTPWorkers and LinkExtractors
+		synchronized (this.workers) {
+			for (HTTPWorker worker : this.workers) {
+				log.debug("Waiting for HTTPWorker " + worker.id + " to stop... ");
+				worker.stop();
+			}
+		}
+		for (LinkExtractor lex : this.linkExtractors) {
+			log.debug("Waiting for LinkExtractor " + lex.id + " to stop... ");
+			lex.stop();
+		}
+
+		this.state = State.stopped;
+		log.debug("Stopped.");
+	}
+
+	/**
+	 * Returns the crawled pages as Corpus
+	 * 
+	 * @return
+	 */
+	public synchronized Corpus getDocumentsAsCorpus() {
+		Corpus corpus = new de.unikassel.ir.vsr.CorpusImpl();
+		// from the completedDocs add all
+		for (HTMLDocument doc : completedDocs.values()) {
+			corpus.addDocument(doc);
+		}
+		return corpus;
+	}
+
+	/**
+	 * Find a fitting HTTPWorker for a host One host is always matched to the
+	 * same Worker to avoid many workers crawling the same host at the same time
+	 * 
+	 * @param host
+	 * @return Worker
+	 */
+	private HTTPWorker getQueueForHost(String host) {
+		// choose one worker to deal with this host
+		// URLs from the same host get always the same worker!
+		return this.workers.get(Math.abs(host.hashCode()) % this.nWorkers);
+	}
+
+}

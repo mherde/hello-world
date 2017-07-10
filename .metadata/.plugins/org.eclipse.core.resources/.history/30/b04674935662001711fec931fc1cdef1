@@ -1,0 +1,17 @@
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+
+public class HTTPFilter implements URLFilter {
+
+	@Override
+	public boolean shouldInclude(URL from, URL to) {
+		/* testing protocol of urls, if from is null (only at start of crawler) set , otherwise test http protocol */
+		boolean fromPage = (from == null) ? true : this.testURLConnection(from);
+		boolean toPage = (to == null) ? false : this.testURLConnection(to);
+
+		/* both URLs must have http or https as protocol */
+		return fromPage && toPage;
+	}
+
+}

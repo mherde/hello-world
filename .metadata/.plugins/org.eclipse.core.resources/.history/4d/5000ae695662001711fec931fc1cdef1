@@ -1,0 +1,18 @@
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+
+public class SameHostURLFilter implements URLFilter {
+
+	@Override
+	public boolean shouldInclude(URL from, URL to) {
+		
+		if (to != null) {
+			return (from == null) ? true : from.getHost().equals(to.getHost());
+		} else {
+			/* if to URL is null, do not add */
+			return false;
+		}
+	}
+
+}

@@ -49,7 +49,7 @@ public class SearchResultItemImpl implements SearchResultItem {
 
 	@Override
 	public String toString() {
-		return "(" + this.document.getId() + ", " + this.similarityScore + ")";
+		return this.document.getId();
 	}
 
 }

@@ -1,0 +1,106 @@
+package de.unikassel.ir.spider;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import de.unikassel.ir.spider.Crawler.State;
+import de.unikassel.ir.vsr.HTMLDocument;
+
+public class HTTPWorker implements Runnable {
+
+	/**
+	 * Id of this HTTPWorker.
+	 */
+	public String id;
+	/**
+	 * Reference to crawler using this HTTPWoker.
+	 */
+	private Crawler crawler;
+	/**
+	 * Queue of URLs that have be crawled by this HTTPworker.
+	 */
+	private Queue<URL> queue = new LinkedList<URL>();
+	/**
+	 * Reference to executor service of this HTTPWorker
+	 */
+	private ExecutorService executorService;
+	/**
+	 * Flag ensuring stop of executor service.
+	 */
+	private boolean shutdown = false;
+	
+	public HTTPWorker(Crawler crawler, String id) {
+		this.id = id;
+		this.crawler = crawler;
+	}
+
+	/**
+	 * Adding URL to queue.
+	 * 
+	 * @param to:
+	 *            URL added to queue
+	 */
+	public void push(URL to) {
+		this.queue.add(to);
+	}
+
+	/**
+	 * Creating and starting executor.
+	 */
+	public void start() {
+		this.executorService = Executors.newSingleThreadExecutor();
+		this.executorService.invokeAll(new ArrayList<HTTPWorker>(this); this, 30, TimeUnit.SECONDS);
+	}
+	
+	public int getQueueSize(){
+		return this.queue.size();
+	}
+
+	/**
+	 * Stopping executor by shutdown and setting flag.
+	 */
+	public void stop() {
+		this.shutdown = true;
+		this.executorService.shutdownNow();
+	}
+
+	@Override
+	public void run() {
+		/* while crawler is running */
+		while (this.crawler.state != State.stopping && !this.shutdown) {
+			/* check whether queue has an URL */
+			if (!this.queue.isEmpty()) {
+				/* poll first URL from queue */
+				URL nextUrl = queue.poll();
+				/* create HTMLDocument */
+				HTMLDocument doc = new HTMLDocument(nextUrl);
+				try {
+					/* try to connect */
+					HttpURLConnection urlConn = (HttpURLConnection) nextUrl.openConnection();
+					urlConn.connect();
+					/* check http connection status and crawler status */
+					if (HttpURLConnection.HTTP_OK == urlConn.getResponseCode() && this.crawler.state != State.stopping && !this.shutdown) {
+						/* if status ok, read in and add to crawled pages */
+						InputStream in = urlConn.getInputStream();
+						doc.read(in);
+						crawler.addCrawledPage(doc);
+					} else {
+						System.err.println(
+								"ERROR: For URL: " + nextUrl + " HTTP status " + urlConn.getResponseCode() + " not okay.");
+					}
+				} catch (IOException e) {
+					System.err.println("ERROR: Could not connect to URL: " + nextUrl);
+				}
+			} 
+		}
+	}
+
+}

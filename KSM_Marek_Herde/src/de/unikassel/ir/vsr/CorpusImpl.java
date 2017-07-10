@@ -62,10 +62,17 @@ public class CorpusImpl implements Corpus {
 			term = term.toLowerCase();
 			/* initial adding of a document list */
 			if (result.size() == 0) {
-				result.addAll(this.corpus.get(term));
+				List<Document> docs = this.corpus.get(term);
+				if (docs != null)
+					result.addAll(docs);
 			} else {
-				/* intersection of current result with the document list of current term */
-				result.retainAll(this.corpus.get(term));
+				/*
+				 * intersection of current result with the document list of
+				 * current term
+				 */
+				List<Document> docs = this.corpus.get(term);
+				if (docs != null)
+					result.retainAll(this.corpus.get(docs));
 			}
 		}
 
@@ -80,7 +87,9 @@ public class CorpusImpl implements Corpus {
 		/* generating set union of query terms' document lists */
 		for (String term : terms) {
 			term = term.toLowerCase();
-			result.addAll(this.corpus.get(term));
+			List<Document> docs = this.corpus.get(term);
+			if (docs != null)
+				result.addAll(docs);
 		}
 
 		return result;

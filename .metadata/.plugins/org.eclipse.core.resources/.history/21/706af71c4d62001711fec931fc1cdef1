@@ -1,0 +1,20 @@
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+
+public class SameHostURLFilter implements URLFilter {
+
+	@Override
+	public boolean shouldInclude(URL from, URL to) {
+		if (from != null)
+			/* checking whether both URLs have same host */
+			return from.getHost().equals(to.getHost());
+		else
+			/* if from URL is null, then there is no comparison; needed for start of crawler */
+			return true;
+		
+		return (from == null) ? true : from.getHost().equals(to.getHost());
+
+	}
+
+}

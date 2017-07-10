@@ -1,0 +1,5 @@
+1499686182485	Move 'englishST.txt' to 'resources'
+1499690559916	Move 'index.jsp' to 'WEB-INF'
+1499690642454	Move 'index.jsp' to 'WebContent'
+1499707426871	Encapsulate field 'url'
+1499707433330	Encapsulate field 'contexts'

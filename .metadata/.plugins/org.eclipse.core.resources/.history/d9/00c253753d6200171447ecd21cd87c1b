@@ -1,0 +1,20 @@
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+
+public class HTTPFilter implements URLFilter {
+
+	private boolean testURLConnection(URL url) {
+		return url.getProtocol().equals("http") || url.getProtocol().equals("https");
+	}
+
+	@Override
+	public boolean shouldInclude(URL from, URL to) {
+		boolean fromPage = (from == null) ? true : this.testURLConnection(from);
+		boolean toPage = this.testURLConnection(to);
+
+		/* both URLs must have http or https as protocol */
+		return fromPage && toPage;
+	}
+
+}

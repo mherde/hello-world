@@ -1,0 +1,77 @@
+package de.unikassel.ir.spider;
+
+import java.net.URL;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import de.unikassel.ir.spider.Crawler.State;
+import de.unikassel.ir.vsr.HTMLDocument;
+
+public class LinkExtractor implements Runnable {
+
+	/**
+	 * Id of this LinkExtractor.
+	 */
+	public String id;
+	/**
+	 * Reference to crawler using this LinkExtractor.
+	 */
+	private Crawler crawler;
+	/**
+	 * Reference to executor service of this HTTPWorker
+	 */
+	private ExecutorService executorService;
+	/**
+	 * Flag ensuring stop of executor service.
+	 */
+	private boolean shutdown = false;
+
+	public LinkExtractor(Crawler crawler, String id) {
+		this.crawler = crawler;
+		this.id = id;
+	}
+
+	/**
+	 * Creating and starting executor.
+	 */
+	public void start() {
+		this.executorService = Executors.newSingleThreadExecutor();
+		this.executorService.execute(this);
+	}
+
+	/**
+	 * Stopping executor by shutdown and setting flag.
+	 */
+	public void stop() {
+		this.shutdown = true;
+		this.executorService.shutdownNow();
+	}
+
+	@Override
+	public void run() {
+			try {
+				/* while crawler is running */
+
+				while (this.crawler.state != State.stopping && !this.shutdown) {
+					HTMLDocument doc;
+				/* wait for getting HTMLDocument */
+				doc = this.crawler.getDocToBeExtracted();
+				/* extract links from HTMLDocument */
+				Set<URL> links = doc.getExtractedLinks();
+				if (links != null) {
+					/* if there are links and crawler status is not stopped, add these links to crawler */
+					for (URL link : links) {
+						if (this.crawler.state != State.stopping && !this.shutdown)
+							this.crawler.addURL(doc.getURL(), link);
+					}
+				}
+				/* mark the HTMLDocument as done */
+				this.crawler.markDone(doc);
+
+			} catch (InterruptedException e) {
+				System.err.println("ERROR: Interruption during waiting for HTMLdocument.");
+			}
+		}
+	}
+}

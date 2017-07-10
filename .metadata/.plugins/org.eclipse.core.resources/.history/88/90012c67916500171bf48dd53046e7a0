@@ -1,0 +1,112 @@
+package de.unikassel.ir.webapp;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class MyServlet
+ */
+@WebServlet("/MyServlet")
+public class MyServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	public static String corpusPath;
+	public static String stopWordsPath;
+	public static String jspPath;
+	private SearchEngine searchEngine;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public MyServlet() {
+		super();
+	}
+
+	@Override
+	public void init() {
+		corpusPath = this.getServletContext().getRealPath("resources/texte");
+		stopWordsPath = this.getServletContext().getRealPath("resources/englishST.txt");
+		jspPath = this.getServletContext().getRealPath("index.jsp");
+		this.searchEngine = new SearchEngine();
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+
+		String search = request.getParameter("search");
+
+		if (search != null) {
+
+			/* getting content from the search field */
+			String searchterm = request.getParameter("searchfield");
+
+			/* determining the used boolean operator */
+			String operator = request.getParameter("operator");
+
+			StringBuffer sites = new StringBuffer();
+
+			/* printing some information */
+			sites.append("Moogle found the following documents w.r.t. your query:");
+			sites.append("<br/><br/>");
+
+			/* stores the corresponding documents */
+			Map<String, List<String>> result = null;
+
+			/* checking which booleanOperator is used */
+			if (operator.equals("OR")) {
+				/* OR operator */
+				// result = this.searchEngine.testQuery(searchterm, false);
+			} else if (operator.equals("AND")) {
+				/* AND operator */
+				// result = this.searchEngine.testQuery(searchterm, true);
+			} else if (operator.equals("RANK")) {
+				/* RANKED operator */
+				result = this.searchEngine.testRankedQuery(searchterm);
+			} else if (operator.equals("PHRASE")) {
+				/* PHRASE operator */
+				Map<String, List<String>> map = this.searchEngine.testPhraseQuery(searchterm);
+				for (Entry<String, List<String>> entry : map.entrySet()) {
+					sites.append("<a href=" + entry.getKey() + ">" + entry.getKey() + "</a><br/>");
+					for (String context : entry.getValue()) {
+						sites.append(entry.getValue());
+						sites.append("<br/>");
+					}
+				}
+			}
+
+			if (result != null)
+				/* printing all documents */
+				for (String s : result) {
+					sites.append("<a href=" + s + ">" + s + "</a>");
+					sites.append("<br/><br/>");
+				}
+
+			request.setAttribute("sites", sites);
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		}
+
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
