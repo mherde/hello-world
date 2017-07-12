@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="com.sun.org.apache.xerces.internal.parsers.DOMParser"/>
 <fullyQualifiedTypeName name="org.cyberneko.html.parsers.DOMParser"/>
 <fullyQualifiedTypeName name="jdk.internal.org.xml.sax.SAXException"/>
 <fullyQualifiedTypeName name="org.apache.xerces.parsers.DOMParser"/>
@@ -18,13 +17,10 @@
 <fullyQualifiedTypeName name="java.util.HashSet"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.PhraseSearch"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
-<fullyQualifiedTypeName name="java.util.TreeSet"/>
-<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenOccurrenceImpl"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenInfo"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenInfoImpl"/>
 <fullyQualifiedTypeName name="java.util.AbstractMap.SimpleEntry"/>
 <fullyQualifiedTypeName name="Pair"/>
-<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenOccurrence"/>
 <fullyQualifiedTypeName name="java.util.Collections"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.sun.org.apache.bcel.internal.generic.NEW"/>
@@ -32,7 +28,6 @@
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.DocumentImpl"/>
 <fullyQualifiedTypeName name="java.util.Queue"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.HTMLDocument"/>
-<fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.util.Scanner"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
@@ -48,16 +43,21 @@
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.Corpus"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.CorpusImpl"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.InvertedIndexImpl"/>
-<fullyQualifiedTypeName name="de.unikassel.ir.webapp.SearchEngine"/>
 <fullyQualifiedTypeName name="java.lang.StringBuffer"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.PhraseSearchIndex"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.vsr.Document"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.webapp.MyServlet"/>
-<fullyQualifiedTypeName name="org.apache.log4j.Logger"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
-<fullyQualifiedTypeName name="java.util.Map.Entry"/>
-<fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.webapp.SearchEngine.SerachEntry"/>
 <fullyQualifiedTypeName name="de.unikassel.ir.webapp.SearchEngine.SearchEntry"/>
+<fullyQualifiedTypeName name="java.util.TreeSet"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenOccurrenceImpl"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.webapp.SearchEngine"/>
+<fullyQualifiedTypeName name="org.apache.log4j.Logger"/>
+<fullyQualifiedTypeName name="org.apache.log4j.BasicConfigurator"/>
+<fullyQualifiedTypeName name="de.unikassel.ir.vsr.TokenOccurrence"/>
 </qualifiedTypeNameHistroy>

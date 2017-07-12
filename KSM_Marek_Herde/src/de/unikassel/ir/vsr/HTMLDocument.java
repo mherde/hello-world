@@ -69,7 +69,7 @@ public class HTMLDocument extends DocumentImpl {
 				 * !! if numbers shall be included the expression in replaceAll,
 				 * it would be replaceAll("[^A-Za-z0-9 -]","") !!
 				 */
-				String stopword = sc.next().toLowerCase().trim().replaceAll("[^A-Za-z -]", "");
+				String stopword = sc.next().toLowerCase().trim().replaceAll("[^A-Za-z0-9 -]", "");
 
 				/* stemming stop word */
 				stemmer.add(stopword.toCharArray(), stopword.length());
@@ -179,7 +179,7 @@ public class HTMLDocument extends DocumentImpl {
 		 * !! if numbers shall be included the expression in replaceAll, it
 		 * would be replaceAll("[^A-Za-z0-9 -]","") !!
 		 */
-		for (String term : text.toLowerCase().trim().replaceAll("[^A-Za-zäöüß0-9 -]", "").split("\\s+|-")) {
+		for (String term : text.toLowerCase().trim().replaceAll("[^A-Za-z0-9 -]", "").split("\\s+|-")) {
 
 			/* stemming term to a token */
 			String token = term;

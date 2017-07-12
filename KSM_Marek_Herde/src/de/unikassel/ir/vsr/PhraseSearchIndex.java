@@ -235,7 +235,7 @@ public class PhraseSearchIndex extends InvertedIndexImpl implements PhraseSearch
 	public Map<Document, List<Integer>> searchPhrase(String phrase) {
 
 		/* splitting phrase regarding blank */
-		String[] terms = phrase.toLowerCase().trim().replaceAll("[^A-Za-zäöüß -]", "").split("\\s+|-");
+		String[] terms = phrase.toLowerCase().trim().replaceAll("[^A-Za-z0-9 -]", "").split("\\s+|-");
 
 		/* call searchPhrase() with list of terms */
 		return this.searchPhrase(Arrays.asList(terms));

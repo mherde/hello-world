@@ -115,7 +115,7 @@ public class HTTPWorker implements Runnable {
 							doc.read(in);
 							crawler.addCrawledPage(doc);
 						} else {
-							System.err.println("ERROR: For URL: " + nextUrl + " HTTP status "
+							System.err.println("ERROR: For URL: " + nextUrl + " HTTPS status "
 									+ urlConn.getResponseCode() + " not okay.");
 						}
 					}

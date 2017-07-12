@@ -2,14 +2,14 @@ package de.unikassel.ir.webapp;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import de.unikassel.ir.webapp.SearchEngine.SearchEntry;
 
 /**
  * Servlet implementation class MyServlet
@@ -58,42 +58,30 @@ public class MyServlet extends HttpServlet {
 
 			StringBuffer sites = new StringBuffer();
 
-			/* printing some information */
-			sites.append("Moogle found the following documents w.r.t. your query:");
-			sites.append("<br/><br/>");
+			/*
+			 * stores the corresponding documents and the context of the query
+			 * terms
+			 */
+			Map<String, List<String>> results = this.searchEngine.query(searchterm, operator);
 
-			/* stores the corresponding documents */
-			List<SearchEntry> result = null;
-
-			/* checking which booleanOperator is used */
-			if (operator.equals("OR")) {
-				/* OR operator */
-				result = this.searchEngine.testQuery(searchterm, false);
-			} else if (operator.equals("AND")) {
-				/* AND operator */
-				result = this.searchEngine.testQuery(searchterm, true);
-			} else if (operator.equals("RANK")) {
-				/* RANKED operator */
-				result = this.searchEngine.testRankedQuery(searchterm);
-			} else if (operator.equals("PHRASE")) {
-				/* PHRASE operator */
-				result = this.searchEngine.testPhraseQuery(searchterm);
-			}
-
-			if (result != null)
-				for (SearchEntry entry : result) {
-					sites.append("<a href=" + entry.getUrl() + ">" + entry.getUrl() + "</a><br/>");
-					for (String context : entry.getContexts()) {
-						sites.append(context);
-						sites.append("<br/>");
-					}
+			/* printing found documents and contexts */
+			sites.append("<br/>");
+			int i = 1;
+			for (Entry<String, List<String>> entry : results.entrySet()) {
+				sites.append("<b>");
+				sites.append(i++);
+				sites.append(".</b>");
+				sites.append("<a href=" + entry.getKey() + ">" + entry.getKey() + "</a><br/>");
+				for (String context : entry.getValue()) {
+					sites.append(context);
 					sites.append("<br/>");
 				}
+				sites.append("<br/>");
+			}
 
 			request.setAttribute("sites", sites);
 			request.getRequestDispatcher("index.jsp").forward(request, response);
 		}
-
 	}
 
 	/**

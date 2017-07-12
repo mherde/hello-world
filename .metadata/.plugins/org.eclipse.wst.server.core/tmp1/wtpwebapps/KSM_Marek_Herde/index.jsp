@@ -6,25 +6,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Moogle</title>
+<title>MOOGLE</title>
 </head>
 <body>
-	<center>
-		<h1>Moogle</h1>
-		<form method="GET" name="search" action="MyServlet">
-			<input type="text" name="searchfield"> <input type="submit"
-				name="search" /> <br> <br> <select name="operator">
-				<option>RANK</option>
-				<option>OR</option>
-				<option>AND</option>
-				<option>PHRASE</option>
-			</select>
-		</form>
-
-		<div id="result">
-			<pre>
+	<h1>MOOGLE</h1>
+	<form method="GET" name="search" action="MyServlet">
+	SEARCH <input type="text" name="searchfield"> <input type="submit"
+			name="search" /> QUERY TYPE <select
+			name="operator">
+			<option>RANK</option>
+			<option>OR</option>
+			<option>AND</option>
+			<option>PHRASE</option>
+		</select>
+	</form>
+	<br/>
+	<hr size="5" noshade>
+	<div id="result">
+	<pre>
         ${requestScope.sites}
     </pre>
-		</div>
-	</center>
+	</div>
 </html>
